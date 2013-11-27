@@ -1,0 +1,96 @@
+﻿ITG.DomainUtils.LocalGroups
+===========================
+
+Данный модуль предоставляет набор командлет для автоматизации ряда операций с локальными группами безопасности.
+
+Тестирование модуля и подготовка к публикации
+---------------------------------------------
+
+Для сборки модуля использую проект [psake](https://github.com/psake/psake). Для инициирования сборки используйте сценарий `build.ps1`.
+Для модульных тестов использую проект [pester](https://github.com/pester/pester).
+
+
+Версия модуля: **1.0.0**
+
+ПОДДЕРЖИВАЮТСЯ КОМАНДЛЕТЫ
+-------------------------
+
+### ADSIPath
+
+#### КРАТКОЕ ОПИСАНИЕ [ConvertTo-ADSIPath][]
+
+Конвертирует идентификатор переданного объекта безопасности в ADSI путь.
+
+	ConvertTo-ADSIPath -Path <String> <CommonParameters>
+
+	ConvertTo-ADSIPath -DistinguishedName <String> <CommonParameters>
+
+### LocalGroup
+
+#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroup][]
+
+Возвращает локальную группу безопасности.
+
+	Get-LocalGroup [[-]] <CommonParameters>
+
+	Get-LocalGroup [-Name] <String> <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [New-LocalGroup][]
+
+Создаёт локальную группу безопасности.
+
+	New-LocalGroup [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroup][]
+
+Удаляет локальную группу безопасности.
+
+	Remove-LocalGroup [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Test-LocalGroup][]
+
+Проверяет наличие локальной группы безопасности.
+
+	Test-LocalGroup [-Name] <String> <CommonParameters>
+
+### LocalGroupMember
+
+#### КРАТКОЕ ОПИСАНИЕ [Add-LocalGroupMember][]
+
+Добавляет учётные записи и/или группы в указанную локальную группу безопасности.
+
+	Add-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroupMember][]
+
+Возвращает членов локальной группы безопасности.
+
+	Get-LocalGroupMember [-Identity] <DirectoryEntry> [-Recursive] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroupMember][]
+
+Удаляет учётные записи и/или группы из указанной локальной группы безопасности.
+
+	Remove-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Test-LocalGroupMember][]
+
+Проверяет наличие учётных записей в указанной локальной группе безопасности.
+
+	Test-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-Recursive] <CommonParameters>
+
+
+[Add-LocalGroupMember]: <itg.domainutils.printers#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
+[ConvertTo-ADSIPath]: <itg.domainutils.printers#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
+[Get-LocalGroup]: <itg.domainutils.printers#get-localgroup> "Возвращает локальную группу безопасности."
+[Get-LocalGroupMember]: <itg.domainutils.printers#get-localgroupmember> "Возвращает членов локальной группы безопасности."
+[New-LocalGroup]: <itg.domainutils.printers#new-localgroup> "Создаёт локальную группу безопасности."
+[Remove-LocalGroup]: <itg.domainutils.printers#remove-localgroup> "Удаляет локальную группу безопасности."
+[Remove-LocalGroupMember]: <itg.domainutils.printers#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
+[Test-LocalGroup]: <itg.domainutils.printers#test-localgroup> "Проверяет наличие локальной группы безопасности."
+[Test-LocalGroupMember]: <itg.domainutils.printers#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
+
+---------------------------------------
+
+Генератор: [ITG.Readme](https://github.com/IT-Service/ITG.Readme "Модуль PowerShell для генерации readme для модулей PowerShell").
+
