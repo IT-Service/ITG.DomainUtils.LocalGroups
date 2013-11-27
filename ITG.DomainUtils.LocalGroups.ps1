@@ -8,7 +8,7 @@ Function New-LocalGroup {
 	System.DirectoryServices.DirectoryEntry
 	Созданная группа безопасности.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.Printers#New-LocalGroup
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup
 .Example
 	New-LocalGroup -Name 'MyUsers' -Description 'Users of my application';
 	Создаёт локальную группу безопасности.
@@ -16,7 +16,7 @@ Function New-LocalGroup {
 	[CmdletBinding(
 		SupportsShouldProcess = $true
 		, ConfirmImpact = 'Medium'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.Printers#New-LocalGroup'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup'
 	)]
 
 	param (
@@ -81,7 +81,7 @@ Function Get-LocalGroup {
 	System.DirectoryServices.DirectoryEntry
 	ADSI объект, представляющий группу безопасности.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.Printers#Get-LocalGroup
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup
 .Example
 	Get-LocalGroup;
 	Возвращает все локальные группы безопасности.
@@ -91,7 +91,7 @@ Function Get-LocalGroup {
 #>
 	[CmdletBinding(
 		DefaultParameterSetName = 'Filter'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.Printers#Get-LocalGroup'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup'
 	)]
 
 	param (
@@ -152,10 +152,10 @@ Function Test-LocalGroup {
 .Outputs
 	System.Bool
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.Printers#Test-LocalGroup
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup
 #>
 	[CmdletBinding(
-		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.Printers#Test-LocalGroup'
+		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup'
 	)]
 
 	param (
@@ -192,7 +192,7 @@ Function Remove-LocalGroup {
 	System.DirectoryServices.DirectoryEntry
 	Группа безопасности.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.Printers#Remove-LocalGroup
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup
 .Example
 	Get-LocalGroup -Name 'Пользователи' | Remove-LocalGroup;
 	Удаляет группу безопасности 'Пользователи'.
@@ -200,7 +200,7 @@ Function Remove-LocalGroup {
 	[CmdletBinding(
 		SupportsShouldProcess = $true
 		, ConfirmImpact = 'High'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.Printers#Remove-LocalGroup'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup'
 	)]
 
 	param (
@@ -259,13 +259,13 @@ Function Get-LocalGroupMember {
 	`SchemaClassName` будет установлен в `Group`, `AuthenticationType` в `Secure`.
 	Дополнительно будет установлен аттрибут `NtAuthority` в `$true`.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.Printers#Get-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroupMember
 .Example
 	Get-LocalGroup -Name Пользователи | Get-LocalGroupMember -Recursive;
 	Возвращает всех членов группы Пользователи с учётом транзитивности.
 #>
 	[CmdletBinding(
-		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.Printers#Get-LocalGroupMember'
+		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroupMember'
 	)]
 
 	param (
@@ -354,14 +354,14 @@ Function Test-LocalGroupMember {
 	Bool
 	Наличие ( `$true` ) или отсутствие ( `$false` ) указанных объектов в указанной группе
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.Printers#Test-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember
 .Example
 	Test-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Member ( Get-ADUser 'admin-sergey.s.betke' ) -Recursive;
 	Проверяем, является ли пользователь `username` членом локальной группы безопасности
 	Пользователи с учётом транзитивности.
 #>
 	[CmdletBinding(
-		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.Printers#Test-LocalGroupMember'
+		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember'
 	)]
 
 	param (
@@ -431,7 +431,7 @@ Function Add-LocalGroupMember {
 	Microsoft.ActiveDirectory.Management.ADGroup
 	Группы AD, которые необходимо включить в локальную группу безопасности.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.Printers#Add-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember
 .Example
 	Get-ADUser 'admin-sergey.s.betke' | Add-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );
 	Добавляем указанного пользователя домена в локальную группы безопасности
@@ -440,7 +440,7 @@ Function Add-LocalGroupMember {
 	[CmdletBinding(
 		SupportsShouldProcess = $true
 		, ConfirmImpact = 'Medium'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.Printers#Add-LocalGroupMember'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember'
 	)]
 
 	param (
@@ -505,7 +505,7 @@ Function Remove-LocalGroupMember {
 	Microsoft.ActiveDirectory.Management.ADGroup
 	Группы AD, которые необходимо удалить из указанной группы.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.Printers#Remove-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember
 .Example
 	Get-ADUser 'admin-sergey.s.betke' | Remove-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );
 	Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
@@ -513,7 +513,7 @@ Function Remove-LocalGroupMember {
 	[CmdletBinding(
 		SupportsShouldProcess = $true
 		, ConfirmImpact = 'High'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.Printers#Remove-LocalGroupMember'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember'
 	)]
 
 	param (

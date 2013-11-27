@@ -137,7 +137,7 @@ ADSI путь к указанным объектам безопасности.
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.Printers#ConvertTo-ADSIPath)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#ConvertTo-ADSIPath)
 - [ADS_NAME_TYPE_ENUM][]
 
 #### Get-LocalGroup
@@ -185,7 +185,7 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.Printers#Get-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup)
 
 #### New-LocalGroup
 
@@ -244,7 +244,7 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.Printers#New-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup)
 
 #### Remove-LocalGroup
 
@@ -292,7 +292,7 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.Printers#Remove-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup)
 
 #### Test-LocalGroup
 
@@ -326,7 +326,7 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.Printers#Test-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup)
 
 #### Add-LocalGroupMember
 
@@ -393,7 +393,7 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.Printers#Add-LocalGroupMember)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember)
 
 #### Get-LocalGroupMember
 
@@ -449,7 +449,7 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.Printers#Get-LocalGroupMember)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroupMember)
 
 #### Remove-LocalGroupMember
 
@@ -515,7 +515,7 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.Printers#Remove-LocalGroupMember)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember)
 
 #### Test-LocalGroupMember
 
@@ -580,23 +580,23 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.Printers#Test-LocalGroupMember)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember)
 
 
 [about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Describes the parameters that can be used with any cmdlet."
-[Add-LocalGroupMember]: <itg.domainutils.printers#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
-[ConvertTo-ADSIPath]: <itg.domainutils.printers#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
-[Get-LocalGroup]: <itg.domainutils.printers#get-localgroup> "Возвращает локальную группу безопасности."
-[Get-LocalGroupMember]: <itg.domainutils.printers#get-localgroupmember> "Возвращает членов локальной группы безопасности."
+[Add-LocalGroupMember]: <#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
+[ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
+[Get-LocalGroup]: <#get-localgroup> "Возвращает локальную группу безопасности."
+[Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
 [Microsoft.ActiveDirectory.Management.ADGroup]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adgroup.aspx> "ADGroup Class (Microsoft.ActiveDirectory.Management)"
 [Microsoft.ActiveDirectory.Management.ADUser]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.aduser.aspx> "ADUser Class (Microsoft.ActiveDirectory.Management)"
-[New-LocalGroup]: <itg.domainutils.printers#new-localgroup> "Создаёт локальную группу безопасности."
-[Remove-LocalGroup]: <itg.domainutils.printers#remove-localgroup> "Удаляет локальную группу безопасности."
-[Remove-LocalGroupMember]: <itg.domainutils.printers#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
+[New-LocalGroup]: <#new-localgroup> "Создаёт локальную группу безопасности."
+[Remove-LocalGroup]: <#remove-localgroup> "Удаляет локальную группу безопасности."
+[Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
 [System.Object]: <http://msdn.microsoft.com/ru-ru/library/system.object.aspx> "Object Class (System)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"
-[Test-LocalGroup]: <itg.domainutils.printers#test-localgroup> "Проверяет наличие локальной группы безопасности."
-[Test-LocalGroupMember]: <itg.domainutils.printers#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
+[Test-LocalGroup]: <#test-localgroup> "Проверяет наличие локальной группы безопасности."
+[Test-LocalGroupMember]: <#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
 
 ---------------------------------------
 
