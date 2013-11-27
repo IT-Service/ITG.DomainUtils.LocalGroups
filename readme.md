@@ -31,7 +31,7 @@
 
 Возвращает локальную группу безопасности.
 
-	Get-LocalGroup [[-]] <CommonParameters>
+	Get-LocalGroup <CommonParameters>
 
 	Get-LocalGroup [-Name] <String> <CommonParameters>
 
@@ -146,7 +146,7 @@ ADSI путь к указанным объектам безопасности.
 
 ##### СИНТАКСИС
 
-	Get-LocalGroup [[-]] <CommonParameters>
+	Get-LocalGroup <CommonParameters>
 
 	Get-LocalGroup [-Name] <String> <CommonParameters>
 
@@ -583,8 +583,9 @@ ADSI объект, представляющий группу безопасно�
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember)
 
 
-[about_CommonParameters]: http://go.microsoft.com/fwlink/?LinkID=113216 "Describes the parameters that can be used with any cmdlet."
+[about_CommonParameters]: <http://go.microsoft.com/fwlink/?LinkID=113216> "Describes the parameters that can be used with any cmdlet."
 [Add-LocalGroupMember]: <#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
+[ADS_NAME_TYPE_ENUM]: <http://msdn.microsoft.com/en-us/library/windows/desktop/aa772267.aspx> 
 [ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
 [Get-LocalGroup]: <#get-localgroup> "Возвращает локальную группу безопасности."
 [Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."

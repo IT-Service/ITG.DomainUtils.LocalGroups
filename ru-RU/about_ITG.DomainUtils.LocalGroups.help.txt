@@ -31,7 +31,7 @@
 
 Возвращает локальную группу безопасности.
 
-	Get-LocalGroup [[-]] <CommonParameters>
+	Get-LocalGroup <CommonParameters>
 
 	Get-LocalGroup [-Name] <String> <CommonParameters>
 
