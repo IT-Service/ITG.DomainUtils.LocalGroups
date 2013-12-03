@@ -14,7 +14,7 @@ Export-ModuleMember -Function Get-Group -Alias Get-LocalGroup;
 Export-ModuleMember -Function Test-Group -Alias Test-LocalGroup;
 Export-ModuleMember -Function Remove-Group -Alias Remove-LocalGroup;
 
-Export-ModuleMember -Function Get-LocalGroupMember;
+Export-ModuleMember -Function Get-GroupMember -Alias Get-LocalGroupMember;
 Export-ModuleMember -Function Test-LocalGroupMember;
 Export-ModuleMember -Function Add-LocalGroupMember;
 Export-ModuleMember -Function Remove-LocalGroupMember;

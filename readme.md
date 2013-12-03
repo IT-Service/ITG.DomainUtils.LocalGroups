@@ -63,6 +63,14 @@
 
 	Test-Group [-Name] <String> <CommonParameters>
 
+### GroupMember
+
+#### КРАТКОЕ ОПИСАНИЕ [Get-GroupMember][]
+
+Возвращает членов локальной группы безопасности.
+
+	Get-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
+
 ### LocalGroupMember
 
 #### КРАТКОЕ ОПИСАНИЕ [Add-LocalGroupMember][]
@@ -70,12 +78,6 @@
 Добавляет учётные записи и/или группы в указанную локальную группу безопасности.
 
 	Add-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
-
-#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroupMember][]
-
-Возвращает членов локальной группы безопасности.
-
-	Get-LocalGroupMember [-Identity] <DirectoryEntry> [-Recursive] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroupMember][]
 
@@ -427,6 +429,60 @@ Test-LocalGroup
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group)
 
+#### Get-GroupMember
+
+[Get-GroupMember][] возвращает членов указанной локальной группы безопасности.
+В том числе - и с учётом транзитивности при указании флага `-Recursive`
+
+##### ПСЕВДОНИМЫ
+
+Get-LocalGroupMember
+
+##### СИНТАКСИС
+
+	Get-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
+
+##### ВХОДНЫЕ ДАННЫЕ
+
+- System.DirectoryServices.AccountManagement.GroupPrincipal
+Группа безопасности.
+
+##### ВЫХОДНЫЕ ДАННЫЕ
+
+- System.DirectoryServices.AccountManagement.Principal
+Члены указанной группы безопасности.
+
+##### ПАРАМЕТРЫ
+
+- `[GroupPrincipal] Group`
+	Группа безопасности
+	* Тип: System.DirectoryServices.AccountManagement.GroupPrincipal
+	* Требуется? да
+	* Позиция? 2
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[SwitchParameter] Recursive`
+	Запросить членов группы с учётом транзитивности
+	
+
+- `<CommonParameters>`
+	Этот командлет поддерживает общие параметры: Verbose, Debug,
+	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
+	[about_CommonParameters][].
+
+
+##### ПРИМЕРЫ
+
+1. Возвращает всех членов группы Пользователи с учётом транзитивности.
+
+		Get-Group -Name Пользователи | Get-LocalGroupMember -Recursive;
+
+##### ССЫЛКИ ПО ТЕМЕ
+
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-GroupMember)
+
 #### Add-LocalGroupMember
 
 Добавляет учётные записи и/или группы в указанную локальную группу безопасности.
@@ -493,62 +549,6 @@ Test-LocalGroup
 ##### ССЫЛКИ ПО ТЕМЕ
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember)
-
-#### Get-LocalGroupMember
-
-[Get-LocalGroupMember][] возвращает членов указанной локальной группы безопасности.
-В том числе - и с учётом транзитивности при указании флага `-Recursive`
-
-##### СИНТАКСИС
-
-	Get-LocalGroupMember [-Identity] <DirectoryEntry> [-Recursive] <CommonParameters>
-
-##### ВХОДНЫЕ ДАННЫЕ
-
-- System.DirectoryServices.DirectoryEntry
-Группа безопасности.
-
-##### ВЫХОДНЫЕ ДАННЫЕ
-
-- System.DirectoryServices.DirectoryEntry
-Члены указанной группы безопасности.
-- PSObject
-Для групп типа `NT AUTHORITY/ИНТЕРАКТИВНЫЕ` возвращён будет объект,
-содержащий свойства `Path`, `Name`, `objectSid`, `groupType`.
-`SchemaClassName` будет установлен в `Group`, `AuthenticationType` в `Secure`.
-Дополнительно будет установлен аттрибут `NtAuthority` в `$true`.
-
-##### ПАРАМЕТРЫ
-
-- `[DirectoryEntry] Identity`
-	Группа безопасности
-	* Тип: System.DirectoryServices.DirectoryEntry
-	* Псевдонимы: Group
-	* Требуется? да
-	* Позиция? 2
-	* Принимать входные данные конвейера? true (ByValue)
-	* Принимать подстановочные знаки? нет
-
-- `[SwitchParameter] Recursive`
-	Запросить членов группы с учётом транзитивности
-	
-
-- `<CommonParameters>`
-	Этот командлет поддерживает общие параметры: Verbose, Debug,
-	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-	[about_CommonParameters][].
-
-
-##### ПРИМЕРЫ
-
-1. Возвращает всех членов группы Пользователи с учётом транзитивности.
-
-		Get-LocalGroup -Name Пользователи | Get-LocalGroupMember -Recursive;
-
-##### ССЫЛКИ ПО ТЕМЕ
-
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroupMember)
 
 #### Remove-LocalGroupMember
 
@@ -687,7 +687,8 @@ Test-LocalGroup
 [ADS_NAME_TYPE_ENUM]: <http://msdn.microsoft.com/en-us/library/windows/desktop/aa772267.aspx> 
 [ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
 [Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
-[Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
+[Get-GroupMember]: <#get-groupmember> "Возвращает членов локальной группы безопасности."
+[Get-LocalGroupMember]: <#get-groupmember> "Возвращает членов локальной группы безопасности."
 [Microsoft.ActiveDirectory.Management.ADGroup]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adgroup.aspx> "ADGroup Class (Microsoft.ActiveDirectory.Management)"
 [Microsoft.ActiveDirectory.Management.ADUser]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.aduser.aspx> "ADUser Class (Microsoft.ActiveDirectory.Management)"
 [New-Group]: <#new-group> "Создаёт локальную группу безопасности."

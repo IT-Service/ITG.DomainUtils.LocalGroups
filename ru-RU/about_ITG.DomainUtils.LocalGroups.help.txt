@@ -63,6 +63,14 @@
 
 	Test-Group [-Name] <String> <CommonParameters>
 
+### GroupMember
+
+#### КРАТКОЕ ОПИСАНИЕ [Get-GroupMember][]
+
+Возвращает членов локальной группы безопасности.
+
+	Get-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
+
 ### LocalGroupMember
 
 #### КРАТКОЕ ОПИСАНИЕ [Add-LocalGroupMember][]
@@ -70,12 +78,6 @@
 Добавляет учётные записи и/или группы в указанную локальную группу безопасности.
 
 	Add-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
-
-#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroupMember][]
-
-Возвращает членов локальной группы безопасности.
-
-	Get-LocalGroupMember [-Identity] <DirectoryEntry> [-Recursive] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroupMember][]
 
@@ -93,7 +95,7 @@
 [Add-LocalGroupMember]: <#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
 [ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
 [Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
-[Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
+[Get-GroupMember]: <#get-groupmember> "Возвращает членов локальной группы безопасности."
 [New-Group]: <#new-group> "Создаёт локальную группу безопасности."
 [Remove-Group]: <#remove-group> "Удаляет локальную группу безопасности."
 [Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
