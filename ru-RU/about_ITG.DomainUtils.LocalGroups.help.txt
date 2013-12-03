@@ -10,7 +10,7 @@
 Для модульных тестов использую проект [pester](https://github.com/pester/pester).
 
 
-Версия модуля: **1.0.0**
+Версия модуля: **2.0.0**
 
 ПОДДЕРЖИВАЮТСЯ КОМАНДЛЕТЫ
 -------------------------
@@ -25,15 +25,25 @@
 
 	ConvertTo-ADSIPath -DistinguishedName <String> <CommonParameters>
 
-### LocalGroup
+	ConvertTo-ADSIPath -SID <String> <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroup][]
+### Group
+
+#### КРАТКОЕ ОПИСАНИЕ [Get-Group][]
 
 Возвращает локальную группу безопасности.
 
-	Get-LocalGroup <CommonParameters>
+	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-	Get-LocalGroup [-Name] <String> <CommonParameters>
+	Get-Group [[-Filter] <String>] [-Description <String>] [-DisplayName <String>] <CommonParameters>
+
+	Get-Group [-Name <String>] <CommonParameters>
+
+	Get-Group [-UserPrincipalName <String>] <CommonParameters>
+
+	Get-Group [-SamAccountName <String>] <CommonParameters>
+
+### LocalGroup
 
 #### КРАТКОЕ ОПИСАНИЕ [New-LocalGroup][]
 
@@ -82,7 +92,7 @@
 
 [Add-LocalGroupMember]: <#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
 [ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
-[Get-LocalGroup]: <#get-localgroup> "Возвращает локальную группу безопасности."
+[Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
 [Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
 [New-LocalGroup]: <#new-localgroup> "Создаёт локальную группу безопасности."
 [Remove-LocalGroup]: <#remove-localgroup> "Удаляет локальную группу безопасности."

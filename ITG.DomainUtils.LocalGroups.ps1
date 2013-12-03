@@ -71,46 +71,106 @@ Function New-LocalGroup {
 	}
 }
 
-Function Get-LocalGroup {
+Function Get-Group {
 <#
 .Synopsis
 	Возвращает локальную группу безопасности. 
 .Description
 	Get-LocalGroup возвращает локальную группу (или группы) безопасности с указанными параметрами.
+.Inputs
+	System.DirectoryServices.AccountManagement.GroupPrincipal
+	Объект, определяющий параметры поиска.
 .Outputs
-	System.DirectoryServices.DirectoryEntry
-	ADSI объект, представляющий группу безопасности.
+	System.DirectoryServices.AccountManagement.GroupPrincipal
+	Объект, представляющий группу безопасности.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-Group
 .Example
-	Get-LocalGroup;
+	Get-Group -Filter '*';
 	Возвращает все локальные группы безопасности.
 .Example
-	Get-LocalGroup -Name 'Пользователи';
+	Get-Group -Name 'Пользователи';
 	Возвращает группу безопасности Пользователи.
+.Example
+	Get-Group -Filter 'Адм*';
+	Возвращает локальные группы безопасности: Администраторы и другие, имена которых начинаются на 'Адм'.
 #>
 	[CmdletBinding(
-		DefaultParameterSetName = 'Filter'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup'
+		DefaultParameterSetName = 'Sid'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-Group'
 	)]
 
 	param (
 		# Идентификатор группы безопасности
 		[Parameter(
-			Mandatory = $true
+			Mandatory = $false
 			, Position = 1
-			, ValueFromPipeline = $true
-			, ValueFromPipelineByPropertyName = $true
-			, ParameterSetName = 'Identity'
+			, ParameterSetName = 'CustomSearch'
 		)]
 		[String]
-		[Alias( 'Identity' )]
+		$Filter = '*'
+	,
+		# Описание искомой группы безопасности
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'CustomSearch'
+		)]
+		[String]
+		$Description
+	,
+		# Отображаемое имя искомой группы безопасности
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'CustomSearch'
+		)]
+		[String]
+		$DisplayName
+	,
+		# Идентификатор группы безопасности
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Name'
+		)]
+		[String]
 		$Name
+	,
+		# Имя участника-пользователя искомой группы безопасности
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'UserPrincipalName'
+		)]
+		[String]
+		$UserPrincipalName
+	,
+		# Имя учетной записи искомой группы безопасности
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'SamAccountName'
+		)]
+		[String]
+		$SamAccountName
+	,
+		# Идентификатор безопасности искомой группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Sid'
+		)]
+		[System.Security.Principal.SecurityIdentifier]
+		$Sid
 	)
 
 	begin {
 		try {
-			[System.DirectoryServices.DirectoryEntry] $Computer = [ADSI]"WinNT://$Env:COMPUTERNAME,Computer";
+			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
+				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
+			;
+			$Searcher = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalSearcher;
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -120,22 +180,48 @@ Function Get-LocalGroup {
 	process {
 		try {
 			switch ( $PsCmdlet.ParameterSetName ) {
-				'Identity' {
-					[System.DirectoryServices.DirectoryEntry] $Group = $Computer.Children.Find( $Name, 'Group' );
-					if ( $Group.Path ) {
-						return $Group;
-					} else {
-						Write-Error `
-							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
-							-Category ObjectNotFound `
-						;
+				'CustomSearch' {
+					$Params = @{};
+					foreach( $Param in ( Get-Command Get-Group ).Parameters.Values.GetEnumerator() ) {
+						if (
+							$Param.ParameterSets.ContainsKey( 'CustomSearch' ) `
+							-and $PSBoundParameters.ContainsKey( $Param.Name )
+						) {
+							switch ( $Param.Name ) {
+								'Filter' {
+									$Params.Name = $Filter;
+									break;
+								}
+								default {
+									$Params.( $Param.Name ) = $PSBoundParameters.( $Param.Name );
+									break;
+								};
+							};
+						};
 					};
-				}
-				'Filter' {
-					$Computer.Children `
-					| ? { $_.SchemaClassName -eq 'Group' } `
+					$Searcher.QueryFilter = New-Object -Type System.DirectoryServices.AccountManagement.GroupPrincipal `
+						-ArgumentList ( $ComputerContext ) `
+						-Property $Params `
 					;
+					$Groups = @( $Searcher.FindAll() );
+					break;
 				}
+				default {
+					$Groups = @( [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity(
+						$ComputerContext
+						, ( [System.DirectoryServices.AccountManagement.IdentityType]::Parse( [System.DirectoryServices.AccountManagement.IdentityType], $PsCmdlet.ParameterSetName ) )
+						, ( $PSBoundParameters.( $PsCmdlet.ParameterSetName ) )
+					) );
+					break;
+				}
+			};
+			if ( $Groups ) {
+				return $Groups;
+			} else {
+				Write-Error `
+					-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
+					-Category ObjectNotFound `
+				;
 			};
 		} catch {
 			Write-Error `
@@ -144,6 +230,8 @@ Function Get-LocalGroup {
 		};
 	}
 }
+
+New-Alias -Name Get-LocalGroup -Value Get-Group -Force;
 
 Function Test-LocalGroup {
 <#

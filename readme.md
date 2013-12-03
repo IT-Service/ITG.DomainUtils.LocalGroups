@@ -10,7 +10,7 @@
 Для модульных тестов использую проект [pester](https://github.com/pester/pester).
 
 
-Версия модуля: **1.0.0**
+Версия модуля: **2.0.0**
 
 ПОДДЕРЖИВАЮТСЯ КОМАНДЛЕТЫ
 -------------------------
@@ -25,15 +25,25 @@
 
 	ConvertTo-ADSIPath -DistinguishedName <String> <CommonParameters>
 
-### LocalGroup
+	ConvertTo-ADSIPath -SID <String> <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroup][]
+### Group
+
+#### КРАТКОЕ ОПИСАНИЕ [Get-Group][]
 
 Возвращает локальную группу безопасности.
 
-	Get-LocalGroup <CommonParameters>
+	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-	Get-LocalGroup [-Name] <String> <CommonParameters>
+	Get-Group [[-Filter] <String>] [-Description <String>] [-DisplayName <String>] <CommonParameters>
+
+	Get-Group [-Name <String>] <CommonParameters>
+
+	Get-Group [-UserPrincipalName <String>] <CommonParameters>
+
+	Get-Group [-SamAccountName <String>] <CommonParameters>
+
+### LocalGroup
 
 #### КРАТКОЕ ОПИСАНИЕ [New-LocalGroup][]
 
@@ -92,6 +102,8 @@
 
 	ConvertTo-ADSIPath -DistinguishedName <String> <CommonParameters>
 
+	ConvertTo-ADSIPath -SID <String> <CommonParameters>
+
 ##### ВХОДНЫЕ ДАННЫЕ
 
 - System.DirectoryServices.DirectoryEntry
@@ -122,6 +134,14 @@ ADSI путь к указанным объектам безопасности.
 	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
 
+- `[String] SID`
+	SID
+	* Тип: [System.String][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
 - `<CommonParameters>`
 	Этот командлет поддерживает общие параметры: Verbose, Debug,
 	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
@@ -140,30 +160,93 @@ ADSI путь к указанным объектам безопасности.
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#ConvertTo-ADSIPath)
 - [ADS_NAME_TYPE_ENUM][]
 
-#### Get-LocalGroup
+#### Get-Group
 
 [Get-LocalGroup][] возвращает локальную группу (или группы) безопасности с указанными параметрами.
 
+##### ПСЕВДОНИМЫ
+
+Get-LocalGroup
+
 ##### СИНТАКСИС
 
-	Get-LocalGroup <CommonParameters>
+	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-	Get-LocalGroup [-Name] <String> <CommonParameters>
+	Get-Group [[-Filter] <String>] [-Description <String>] [-DisplayName <String>] <CommonParameters>
+
+	Get-Group [-Name <String>] <CommonParameters>
+
+	Get-Group [-UserPrincipalName <String>] <CommonParameters>
+
+	Get-Group [-SamAccountName <String>] <CommonParameters>
+
+##### ВХОДНЫЕ ДАННЫЕ
+
+- System.DirectoryServices.AccountManagement.GroupPrincipal
+Объект, определяющий параметры поиска.
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
-- System.DirectoryServices.DirectoryEntry
-ADSI объект, представляющий группу безопасности.
+- System.DirectoryServices.AccountManagement.GroupPrincipal
+Объект, представляющий группу безопасности.
 
 ##### ПАРАМЕТРЫ
+
+- `[String] Filter`
+	Идентификатор группы безопасности
+	* Тип: [System.String][]
+	* Требуется? нет
+	* Позиция? 2
+	* Значение по умолчанию `*`
+	* Принимать входные данные конвейера? false
+	* Принимать подстановочные знаки? нет
+
+- `[String] Description`
+	Описание искомой группы безопасности
+	* Тип: [System.String][]
+	* Требуется? нет
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[String] DisplayName`
+	Отображаемое имя искомой группы безопасности
+	* Тип: [System.String][]
+	* Требуется? нет
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
 
 - `[String] Name`
 	Идентификатор группы безопасности
 	* Тип: [System.String][]
-	* Псевдонимы: Identity
+	* Требуется? нет
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[String] UserPrincipalName`
+	Имя участника-пользователя искомой группы безопасности
+	* Тип: [System.String][]
+	* Требуется? нет
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[String] SamAccountName`
+	Имя учетной записи искомой группы безопасности
+	* Тип: [System.String][]
+	* Требуется? нет
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[SecurityIdentifier] Sid`
+	Идентификатор безопасности искомой группы безопасности
+	* Тип: [System.Security.Principal.SecurityIdentifier][]
 	* Требуется? да
-	* Позиция? 2
-	* Принимать входные данные конвейера? true (ByValue, ByPropertyName)
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
 
 - `<CommonParameters>`
@@ -177,15 +260,19 @@ ADSI объект, представляющий группу безопасно�
 
 1. Возвращает все локальные группы безопасности.
 
-		Get-LocalGroup;
+		Get-Group -Filter '*';
 
 2. Возвращает группу безопасности Пользователи.
 
-		Get-LocalGroup -Name 'Пользователи';
+		Get-Group -Name 'Пользователи';
+
+3. Возвращает локальные группы безопасности: Администраторы и другие, имена которых начинаются на 'Адм'.
+
+		Get-Group -Filter 'Адм*';
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-Group)
 
 #### New-LocalGroup
 
@@ -587,7 +674,8 @@ ADSI объект, представляющий группу безопасно�
 [Add-LocalGroupMember]: <#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
 [ADS_NAME_TYPE_ENUM]: <http://msdn.microsoft.com/en-us/library/windows/desktop/aa772267.aspx> 
 [ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
-[Get-LocalGroup]: <#get-localgroup> "Возвращает локальную группу безопасности."
+[Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
+[Get-LocalGroup]: <#get-group> "Возвращает локальную группу безопасности."
 [Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
 [Microsoft.ActiveDirectory.Management.ADGroup]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adgroup.aspx> "ADGroup Class (Microsoft.ActiveDirectory.Management)"
 [Microsoft.ActiveDirectory.Management.ADUser]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.aduser.aspx> "ADUser Class (Microsoft.ActiveDirectory.Management)"
@@ -595,6 +683,7 @@ ADSI объект, представляющий группу безопасно�
 [Remove-LocalGroup]: <#remove-localgroup> "Удаляет локальную группу безопасности."
 [Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
 [System.Object]: <http://msdn.microsoft.com/ru-ru/library/system.object.aspx> "Object Class (System)"
+[System.Security.Principal.SecurityIdentifier]: <http://msdn.microsoft.com/ru-ru/library/system.security.principal.securityidentifier.aspx> "SecurityIdentifier Class (System.Security.Principal)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"
 [Test-LocalGroup]: <#test-localgroup> "Проверяет наличие локальной группы безопасности."
 [Test-LocalGroupMember]: <#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
