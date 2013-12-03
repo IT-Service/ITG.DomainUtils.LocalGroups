@@ -278,29 +278,11 @@
 					<maml:name>Description</maml:name>
 					<parameterValue required="false">String</parameterValue>
 				</parameter>
-				<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-					<maml:name>DisplayName</maml:name>
-					<parameterValue required="false">String</parameterValue>
-				</parameter>
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Get-Group</maml:name>
 				<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 					<maml:name>Name</maml:name>
-					<parameterValue required="false">String</parameterValue>
-				</parameter>
-			</syntaxItem>
-			<syntaxItem>
-				<maml:name>Get-Group</maml:name>
-				<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-					<maml:name>UserPrincipalName</maml:name>
-					<parameterValue required="false">String</parameterValue>
-				</parameter>
-			</syntaxItem>
-			<syntaxItem>
-				<maml:name>Get-Group</maml:name>
-				<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-					<maml:name>SamAccountName</maml:name>
 					<parameterValue required="false">String</parameterValue>
 				</parameter>
 			</syntaxItem>
@@ -322,30 +304,9 @@
 				<parameterValue required="True">String</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-				<maml:name>DisplayName</maml:name>
-				<maml:description>
-					<maml:para>Отображаемое имя искомой группы безопасности</maml:para>
-				</maml:description>
-				<parameterValue required="True">String</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 				<maml:name>Name</maml:name>
 				<maml:description>
 					<maml:para>Идентификатор группы безопасности</maml:para>
-				</maml:description>
-				<parameterValue required="True">String</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-				<maml:name>UserPrincipalName</maml:name>
-				<maml:description>
-					<maml:para>Имя участника-пользователя искомой группы безопасности</maml:para>
-				</maml:description>
-				<parameterValue required="True">String</parameterValue>
-			</parameter>
-			<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-				<maml:name>SamAccountName</maml:name>
-				<maml:description>
-					<maml:para>Имя учетной записи искомой группы безопасности</maml:para>
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
 			</parameter>
@@ -826,9 +787,9 @@
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Test-LocalGroup</name>
+			<name>Test-Group</name>
 			<verb>Test</verb>
-			<noun>LocalGroup</noun>
+			<noun>Group</noun>
 			<maml:description>
 				<maml:para>Проверяет наличие локальной группы безопасности.</maml:para>
 			</maml:description>
@@ -839,7 +800,14 @@
 		</details>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Test-LocalGroup</maml:name>
+				<maml:name>Test-Group</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+					<maml:name>Sid</maml:name>
+					<parameterValue required="true">SecurityIdentifier</parameterValue>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Test-Group</maml:name>
 				<parameter required="true" position="2" pipelineInput="true (ByValue, ByPropertyName)" globbing="false">
 					<maml:name>Name</maml:name>
 					<parameterValue required="true">String</parameterValue>
@@ -854,6 +822,13 @@
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
 			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+				<maml:name>Sid</maml:name>
+				<maml:description>
+					<maml:para>Идентификатор безопасности искомой группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">SecurityIdentifier</parameterValue>
+			</parameter>
 		</parameters>
 		<returnValues>
 			<returnValue>
@@ -864,7 +839,7 @@
 		</returnValues>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>

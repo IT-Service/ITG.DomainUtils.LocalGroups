@@ -35,19 +35,23 @@
 
 	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-	Get-Group [[-Filter] <String>] [-Description <String>] [-DisplayName <String>] <CommonParameters>
+	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
 
 	Get-Group [-Name <String>] <CommonParameters>
-
-	Get-Group [-UserPrincipalName <String>] <CommonParameters>
-
-	Get-Group [-SamAccountName <String>] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [New-Group][]
 
 Создаёт локальную группу безопасности.
 
 	New-Group [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Test-Group][]
+
+Проверяет наличие локальной группы безопасности.
+
+	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
+
+	Test-Group [-Name] <String> <CommonParameters>
 
 ### LocalGroup
 
@@ -56,12 +60,6 @@
 Удаляет локальную группу безопасности.
 
 	Remove-LocalGroup [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
-
-#### КРАТКОЕ ОПИСАНИЕ [Test-LocalGroup][]
-
-Проверяет наличие локальной группы безопасности.
-
-	Test-LocalGroup [-Name] <String> <CommonParameters>
 
 ### LocalGroupMember
 
@@ -172,13 +170,9 @@ Get-LocalGroup
 
 	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-	Get-Group [[-Filter] <String>] [-Description <String>] [-DisplayName <String>] <CommonParameters>
+	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
 
 	Get-Group [-Name <String>] <CommonParameters>
-
-	Get-Group [-UserPrincipalName <String>] <CommonParameters>
-
-	Get-Group [-SamAccountName <String>] <CommonParameters>
 
 ##### ВХОДНЫЕ ДАННЫЕ
 
@@ -209,32 +203,8 @@ Get-LocalGroup
 	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
 
-- `[String] DisplayName`
-	Отображаемое имя искомой группы безопасности
-	* Тип: [System.String][]
-	* Требуется? нет
-	* Позиция? named
-	* Принимать входные данные конвейера? true (ByPropertyName)
-	* Принимать подстановочные знаки? нет
-
 - `[String] Name`
 	Идентификатор группы безопасности
-	* Тип: [System.String][]
-	* Требуется? нет
-	* Позиция? named
-	* Принимать входные данные конвейера? true (ByPropertyName)
-	* Принимать подстановочные знаки? нет
-
-- `[String] UserPrincipalName`
-	Имя участника-пользователя искомой группы безопасности
-	* Тип: [System.String][]
-	* Требуется? нет
-	* Позиция? named
-	* Принимать входные данные конвейера? true (ByPropertyName)
-	* Принимать подстановочные знаки? нет
-
-- `[String] SamAccountName`
-	Имя учетной записи искомой группы безопасности
 	* Тип: [System.String][]
 	* Требуется? нет
 	* Позиция? named
@@ -337,6 +307,53 @@ New-LocalGroup
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group)
 
+#### Test-Group
+
+Проверяет наличие локальной группы безопасности.
+
+##### ПСЕВДОНИМЫ
+
+Test-LocalGroup
+
+##### СИНТАКСИС
+
+	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
+
+	Test-Group [-Name] <String> <CommonParameters>
+
+##### ВЫХОДНЫЕ ДАННЫЕ
+
+- System.Bool
+
+##### ПАРАМЕТРЫ
+
+- `[String] Name`
+	Идентификатор группы безопасности
+	* Тип: [System.String][]
+	* Требуется? да
+	* Позиция? 2
+	* Принимать входные данные конвейера? true (ByValue, ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[SecurityIdentifier] Sid`
+	Идентификатор безопасности искомой группы безопасности
+	* Тип: [System.Security.Principal.SecurityIdentifier][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `<CommonParameters>`
+	Этот командлет поддерживает общие параметры: Verbose, Debug,
+	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
+	[about_CommonParameters][].
+
+
+##### ССЫЛКИ ПО ТЕМЕ
+
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group)
+
 #### Remove-LocalGroup
 
 [Remove-LocalGroup][] удаляет локальную группу (или группы) безопасности, переданные по конвейеру.
@@ -384,40 +401,6 @@ New-LocalGroup
 ##### ССЫЛКИ ПО ТЕМЕ
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup)
-
-#### Test-LocalGroup
-
-Проверяет наличие локальной группы безопасности.
-
-##### СИНТАКСИС
-
-	Test-LocalGroup [-Name] <String> <CommonParameters>
-
-##### ВЫХОДНЫЕ ДАННЫЕ
-
-- System.Bool
-
-##### ПАРАМЕТРЫ
-
-- `[String] Name`
-	Идентификатор группы безопасности
-	* Тип: [System.String][]
-	* Псевдонимы: Identity
-	* Требуется? да
-	* Позиция? 2
-	* Принимать входные данные конвейера? true (ByValue, ByPropertyName)
-	* Принимать подстановочные знаки? нет
-
-- `<CommonParameters>`
-	Этот командлет поддерживает общие параметры: Verbose, Debug,
-	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-	[about_CommonParameters][].
-
-
-##### ССЫЛКИ ПО ТЕМЕ
-
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup)
 
 #### Add-LocalGroupMember
 
@@ -688,7 +671,7 @@ New-LocalGroup
 [System.Object]: <http://msdn.microsoft.com/ru-ru/library/system.object.aspx> "Object Class (System)"
 [System.Security.Principal.SecurityIdentifier]: <http://msdn.microsoft.com/ru-ru/library/system.security.principal.securityidentifier.aspx> "SecurityIdentifier Class (System.Security.Principal)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"
-[Test-LocalGroup]: <#test-localgroup> "Проверяет наличие локальной группы безопасности."
+[Test-Group]: <#test-group> "Проверяет наличие локальной группы безопасности."
 [Test-LocalGroupMember]: <#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
 
 ---------------------------------------

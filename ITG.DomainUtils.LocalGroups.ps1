@@ -28,7 +28,7 @@ Function New-Group {
 			, ValueFromPipelineByPropertyName = $true
 			, ParameterSetName = 'GroupProperties'
 		)]
-        [Alias( 'SamAccountName' )]
+		[Alias( 'SamAccountName' )]
 		[String]
 		$Name
 	,
@@ -135,15 +135,6 @@ Function Get-Group {
 		[String]
 		$Description
 	,
-		# Отображаемое имя искомой группы безопасности
-		[Parameter(
-			Mandatory = $false
-			, ValueFromPipelineByPropertyName = $true
-			, ParameterSetName = 'CustomSearch'
-		)]
-		[String]
-		$DisplayName
-	,
 		# Идентификатор группы безопасности
 		[Parameter(
 			Mandatory = $false
@@ -152,24 +143,6 @@ Function Get-Group {
 		)]
 		[String]
 		$Name
-	,
-		# Имя участника-пользователя искомой группы безопасности
-		[Parameter(
-			Mandatory = $false
-			, ValueFromPipelineByPropertyName = $true
-			, ParameterSetName = 'UserPrincipalName'
-		)]
-		[String]
-		$UserPrincipalName
-	,
-		# Имя учетной записи искомой группы безопасности
-		[Parameter(
-			Mandatory = $false
-			, ValueFromPipelineByPropertyName = $true
-			, ParameterSetName = 'SamAccountName'
-		)]
-		[String]
-		$SamAccountName
 	,
 		# Идентификатор безопасности искомой группы безопасности
 		[Parameter(
@@ -220,24 +193,32 @@ Function Get-Group {
 						-Property $Params `
 					;
 					$Groups = @( $Searcher.FindAll() );
+					if ( $Groups ) {
+						return $Groups;
+					} else {
+						Write-Error `
+							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
+							-Category ObjectNotFound `
+						;
+					};
 					break;
 				}
 				default {
-					$Groups = @( [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity(
+					$Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity(
 						$ComputerContext
 						, ( [System.DirectoryServices.AccountManagement.IdentityType]::Parse( [System.DirectoryServices.AccountManagement.IdentityType], $PsCmdlet.ParameterSetName ) )
 						, ( $PSBoundParameters.( $PsCmdlet.ParameterSetName ) )
-					) );
+					);
+					if ( $Group.SamAccountName ) {
+						return $Group;
+					} else {
+						Write-Error `
+							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
+							-Category ObjectNotFound `
+						;
+					};
 					break;
 				}
-			};
-			if ( $Groups ) {
-				return $Groups;
-			} else {
-				Write-Error `
-					-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
-					-Category ObjectNotFound `
-				;
 			};
 		} catch {
 			Write-Error `
@@ -249,17 +230,18 @@ Function Get-Group {
 
 New-Alias -Name Get-LocalGroup -Value Get-Group -Force;
 
-Function Test-LocalGroup {
+Function Test-Group {
 <#
 .Synopsis
 	Проверяет наличие локальной группы безопасности. 
 .Outputs
 	System.Bool
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group
 #>
 	[CmdletBinding(
-		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup'
+		DefaultParameterSetName = 'Sid'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group'
 	)]
 
 	param (
@@ -269,15 +251,45 @@ Function Test-LocalGroup {
 			, Position = 1
 			, ValueFromPipeline = $true
 			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Name'
 		)]
 		[String]
-		[Alias( 'Identity' )]
 		$Name
+	,
+		# Идентификатор безопасности искомой группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Sid'
+		)]
+		[System.Security.Principal.SecurityIdentifier]
+		$Sid
 	)
 
+	begin {
+		try {
+			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
+				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
+			;
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+	}
 	process {
 		try {
-			return [Bool] ( Get-LocalGroup -Name $Name -ErrorAction SilentlyContinue );
+			switch ( $PsCmdlet.ParameterSetName ) {
+				default {
+					$Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity(
+						$ComputerContext
+						, ( [System.DirectoryServices.AccountManagement.IdentityType]::Parse( [System.DirectoryServices.AccountManagement.IdentityType], $PsCmdlet.ParameterSetName ) )
+						, ( $PSBoundParameters.( $PsCmdlet.ParameterSetName ) )
+					);
+					break;
+				}
+			};
+			return [bool] $Group.SamAccountName; # приходится проверять именно SamAccountName, потому как группа возвращается и для несуществующего Sid
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -285,6 +297,8 @@ Function Test-LocalGroup {
 		};
 	}
 }
+
+New-Alias -Name Test-LocalGroup -Value Test-Group -Force;
 
 Function Remove-LocalGroup {
 <#
