@@ -585,9 +585,9 @@
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Remove-LocalGroup</name>
+			<name>Remove-Group</name>
 			<verb>Remove</verb>
-			<noun>LocalGroup</noun>
+			<noun>Group</noun>
 			<maml:description>
 				<maml:para>Удаляет локальную группу безопасности.</maml:para>
 			</maml:description>
@@ -597,14 +597,40 @@
 			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
-			<maml:para>Remove-LocalGroup удаляет локальную группу (или группы) безопасности, переданные по конвейеру.</maml:para>
+			<maml:para>Remove-Group удаляет локальную группу (или группы) безопасности, переданную по конвейеру.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Remove-LocalGroup</maml:name>
+				<maml:name>Remove-Group</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+					<maml:name>Sid</maml:name>
+					<parameterValue required="true">SecurityIdentifier</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Remove-Group</maml:name>
 				<parameter required="true" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
 					<maml:name>Name</maml:name>
 					<parameterValue required="true">String</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Remove-Group</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>Identity</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>WhatIf</maml:name>
@@ -618,9 +644,23 @@
 			<parameter required="true" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
 				<maml:name>Name</maml:name>
 				<maml:description>
-					<maml:para>Группа безопасности к удалению Идентификатор группы безопасности</maml:para>
+					<maml:para>Идентификатор группы безопасности</maml:para>
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+				<maml:name>Sid</maml:name>
+				<maml:description>
+					<maml:para>Идентификатор безопасности искомой группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">SecurityIdentifier</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>Identity</maml:name>
+				<maml:description>
+					<maml:para>Группа безопасности к удалению Идентификатор группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">GroupPrincipal</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>WhatIf</maml:name>
@@ -634,13 +674,13 @@
 		<inputTypes>
 			<inputType>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.GroupPrincipal</maml:name>
 					<maml:description>
-						<maml:para>Группа безопасности.</maml:para>
+						<maml:para>Группа безопасности, которую следует удалить.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
-					<maml:para>Группа безопасности.</maml:para>
+					<maml:para>Группа безопасности, которую следует удалить.</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>
@@ -650,15 +690,15 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-LocalGroup -Name 'Пользователи' | Remove-LocalGroup;</dev:code>
+				<dev:code>Get-Group -Filter 'test*' | Remove-Group -Verbose;</dev:code>
 				<maml:remarks>
-					<maml:para>Удаляет группу безопасности 'Пользователи'.</maml:para>
+					<maml:para>Удаляет группы безопасности, имена которых начинаются с 'test'.</maml:para>
 				</maml:remarks>
 			</example>
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-Group</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>

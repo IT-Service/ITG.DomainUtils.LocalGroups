@@ -45,6 +45,16 @@
 
 	New-Group [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
+#### КРАТКОЕ ОПИСАНИЕ [Remove-Group][]
+
+Удаляет локальную группу безопасности.
+
+	Remove-Group -Sid <SecurityIdentifier> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group -Identity <GroupPrincipal> [-WhatIf] [-Confirm] <CommonParameters>
+
 #### КРАТКОЕ ОПИСАНИЕ [Test-Group][]
 
 Проверяет наличие локальной группы безопасности.
@@ -52,14 +62,6 @@
 	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
 
 	Test-Group [-Name] <String> <CommonParameters>
-
-### LocalGroup
-
-#### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroup][]
-
-Удаляет локальную группу безопасности.
-
-	Remove-LocalGroup [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
 
 ### LocalGroupMember
 
@@ -93,7 +95,7 @@
 [Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
 [Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
 [New-Group]: <#new-group> "Создаёт локальную группу безопасности."
-[Remove-LocalGroup]: <#remove-localgroup> "Удаляет локальную группу безопасности."
+[Remove-Group]: <#remove-group> "Удаляет локальную группу безопасности."
 [Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
 [Test-Group]: <#test-group> "Проверяет наличие локальной группы безопасности."
 [Test-LocalGroupMember]: <#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."

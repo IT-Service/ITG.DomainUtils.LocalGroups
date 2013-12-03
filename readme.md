@@ -45,6 +45,16 @@
 
 	New-Group [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
+#### КРАТКОЕ ОПИСАНИЕ [Remove-Group][]
+
+Удаляет локальную группу безопасности.
+
+	Remove-Group -Sid <SecurityIdentifier> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group -Identity <GroupPrincipal> [-WhatIf] [-Confirm] <CommonParameters>
+
 #### КРАТКОЕ ОПИСАНИЕ [Test-Group][]
 
 Проверяет наличие локальной группы безопасности.
@@ -52,14 +62,6 @@
 	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
 
 	Test-Group [-Name] <String> <CommonParameters>
-
-### LocalGroup
-
-#### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroup][]
-
-Удаляет локальную группу безопасности.
-
-	Remove-LocalGroup [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
 
 ### LocalGroupMember
 
@@ -307,6 +309,77 @@ New-LocalGroup
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group)
 
+#### Remove-Group
+
+[Remove-Group][] удаляет локальную группу (или группы) безопасности, переданную по конвейеру.
+
+##### ПСЕВДОНИМЫ
+
+Remove-LocalGroup
+
+##### СИНТАКСИС
+
+	Remove-Group -Sid <SecurityIdentifier> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group -Identity <GroupPrincipal> [-WhatIf] [-Confirm] <CommonParameters>
+
+##### ВХОДНЫЕ ДАННЫЕ
+
+- System.DirectoryServices.AccountManagement.GroupPrincipal
+Группа безопасности, которую следует удалить.
+
+##### ПАРАМЕТРЫ
+
+- `[String] Name`
+	Идентификатор группы безопасности
+	* Тип: [System.String][]
+	* Требуется? да
+	* Позиция? 2
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[SecurityIdentifier] Sid`
+	Идентификатор безопасности искомой группы безопасности
+	* Тип: [System.Security.Principal.SecurityIdentifier][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[GroupPrincipal] Identity`
+	Группа безопасности к удалению
+	Идентификатор группы безопасности
+	* Тип: System.DirectoryServices.AccountManagement.GroupPrincipal
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[SwitchParameter] WhatIf`
+	* Псевдонимы: wi
+
+- `[SwitchParameter] Confirm`
+	* Псевдонимы: cf
+
+- `<CommonParameters>`
+	Этот командлет поддерживает общие параметры: Verbose, Debug,
+	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
+	[about_CommonParameters][].
+
+
+##### ПРИМЕРЫ
+
+1. Удаляет группы безопасности, имена которых начинаются с 'test'.
+
+		Get-Group -Filter 'test*' | Remove-Group -Verbose;
+
+##### ССЫЛКИ ПО ТЕМЕ
+
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-Group)
+
 #### Test-Group
 
 Проверяет наличие локальной группы безопасности.
@@ -353,54 +426,6 @@ Test-LocalGroup
 ##### ССЫЛКИ ПО ТЕМЕ
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group)
-
-#### Remove-LocalGroup
-
-[Remove-LocalGroup][] удаляет локальную группу (или группы) безопасности, переданные по конвейеру.
-
-##### СИНТАКСИС
-
-	Remove-LocalGroup [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
-
-##### ВХОДНЫЕ ДАННЫЕ
-
-- System.DirectoryServices.DirectoryEntry
-Группа безопасности.
-
-##### ПАРАМЕТРЫ
-
-- `[String] Name`
-	Группа безопасности к удалению
-	Идентификатор группы безопасности
-	* Тип: [System.String][]
-	* Псевдонимы: Identity
-	* Требуется? да
-	* Позиция? 2
-	* Принимать входные данные конвейера? true (ByPropertyName)
-	* Принимать подстановочные знаки? нет
-
-- `[SwitchParameter] WhatIf`
-	* Псевдонимы: wi
-
-- `[SwitchParameter] Confirm`
-	* Псевдонимы: cf
-
-- `<CommonParameters>`
-	Этот командлет поддерживает общие параметры: Verbose, Debug,
-	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-	[about_CommonParameters][].
-
-
-##### ПРИМЕРЫ
-
-1. Удаляет группу безопасности 'Пользователи'.
-
-		Get-LocalGroup -Name 'Пользователи' | Remove-LocalGroup;
-
-##### ССЫЛКИ ПО ТЕМЕ
-
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup)
 
 #### Add-LocalGroupMember
 
@@ -666,7 +691,7 @@ Test-LocalGroup
 [Microsoft.ActiveDirectory.Management.ADGroup]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adgroup.aspx> "ADGroup Class (Microsoft.ActiveDirectory.Management)"
 [Microsoft.ActiveDirectory.Management.ADUser]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.aduser.aspx> "ADUser Class (Microsoft.ActiveDirectory.Management)"
 [New-Group]: <#new-group> "Создаёт локальную группу безопасности."
-[Remove-LocalGroup]: <#remove-localgroup> "Удаляет локальную группу безопасности."
+[Remove-Group]: <#remove-group> "Удаляет локальную группу безопасности."
 [Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
 [System.Object]: <http://msdn.microsoft.com/ru-ru/library/system.object.aspx> "Object Class (System)"
 [System.Security.Principal.SecurityIdentifier]: <http://msdn.microsoft.com/ru-ru/library/system.security.principal.securityidentifier.aspx> "SecurityIdentifier Class (System.Security.Principal)"

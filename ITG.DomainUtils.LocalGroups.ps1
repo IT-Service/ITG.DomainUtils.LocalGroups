@@ -300,44 +300,64 @@ Function Test-Group {
 
 New-Alias -Name Test-LocalGroup -Value Test-Group -Force;
 
-Function Remove-LocalGroup {
+Function Remove-Group {
 <#
 .Synopsis
 	Удаляет локальную группу безопасности. 
 .Description
-	Remove-LocalGroup удаляет локальную группу (или группы) безопасности, переданные по конвейеру.
+	Remove-Group удаляет локальную группу (или группы) безопасности, переданную по конвейеру.
 .Inputs
-	System.DirectoryServices.DirectoryEntry
-	Группа безопасности.
+	System.DirectoryServices.AccountManagement.GroupPrincipal
+	Группа безопасности, которую следует удалить.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-Group
 .Example
-	Get-LocalGroup -Name 'Пользователи' | Remove-LocalGroup;
-	Удаляет группу безопасности 'Пользователи'.
+	Get-Group -Filter 'test*' | Remove-Group -Verbose;
+	Удаляет группы безопасности, имена которых начинаются с 'test'.
 #>
 	[CmdletBinding(
-		SupportsShouldProcess = $true
+		DefaultParameterSetName = 'Sid'
+		, SupportsShouldProcess = $true
 		, ConfirmImpact = 'High'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-Group'
 	)]
 
 	param (
-		# Группа безопасности к удалению
 		# Идентификатор группы безопасности
 		[Parameter(
 			Mandatory = $true
 			, Position = 1
 			, ValueFromPipelineByPropertyName = $true
-			, ParameterSetName = 'Identity'
+			, ParameterSetName = 'Name'
 		)]
 		[String]
-		[Alias( 'Identity' )]
 		$Name
+	,
+		# Идентификатор безопасности искомой группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Sid'
+		)]
+		[System.Security.Principal.SecurityIdentifier]
+		$Sid
+	,
+		# Группа безопасности к удалению
+		# Идентификатор группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'Identity'
+		)]
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
+		$Identity
 	)
 
 	begin {
 		try {
-			[System.DirectoryServices.DirectoryEntry] $Computer = [ADSI]"WinNT://$Env:COMPUTERNAME,Computer";
+			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
+				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
+			;
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -346,8 +366,24 @@ Function Remove-LocalGroup {
 	}
 	process {
 		try {
-			if ( $PSCmdlet.ShouldProcess( "$Name" ) ) {
-				$Computer.Delete( 'Group', $Name );
+			switch ( $PsCmdlet.ParameterSetName ) {
+				'Identity' {
+					if ( $PSCmdlet.ShouldProcess( "$( $Identity.Name )" ) ) {
+						$Identity.Delete();
+					};
+					break;
+				}
+				default {
+					$Params = @{};
+					$Params.Add( $PsCmdlet.ParameterSetName, $PSBoundParameters.( $PsCmdlet.ParameterSetName ) );
+					Get-Group `
+						@Params `
+						-Verbose:$VerbosePreference `
+					| Remove-Group `
+						-Verbose:$VerbosePreference `
+					;
+					break;
+				}
 			};
 		} catch {
 			Write-Error `
@@ -356,6 +392,8 @@ Function Remove-LocalGroup {
 		};
 	}
 }
+
+New-Alias -Name Remove-LocalGroup -Value Remove-Group -Force;
 
 Function Get-LocalGroupMember {
 <#

@@ -12,7 +12,7 @@ $loc = Import-LocalizedData;
 Export-ModuleMember -Function New-Group -Alias New-LocalGroup;
 Export-ModuleMember -Function Get-Group -Alias Get-LocalGroup;
 Export-ModuleMember -Function Test-Group -Alias Test-LocalGroup;
-Export-ModuleMember -Function Remove-LocalGroup;
+Export-ModuleMember -Function Remove-Group -Alias Remove-LocalGroup;
 
 Export-ModuleMember -Function Get-LocalGroupMember;
 Export-ModuleMember -Function Test-LocalGroupMember;
