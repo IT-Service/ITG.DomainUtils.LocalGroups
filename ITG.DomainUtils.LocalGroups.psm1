@@ -9,7 +9,7 @@ $loc = Import-LocalizedData;
 . (	Join-Path -Path $CurrentDir -ChildPath 'ITG.DomainUtils.NameConvertors.ps1' );
 . (	Join-Path -Path $CurrentDir -ChildPath 'ITG.DomainUtils.LocalGroups.ps1' );
 
-Export-ModuleMember -Function New-LocalGroup;
+Export-ModuleMember -Function New-Group -Alias New-LocalGroup;
 Export-ModuleMember -Function Get-Group -Alias Get-LocalGroup;
 Export-ModuleMember -Function Test-LocalGroup;
 Export-ModuleMember -Function Remove-LocalGroup;

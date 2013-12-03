@@ -258,7 +258,7 @@
 			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
-			<maml:para>Get-LocalGroup возвращает локальную группу (или группы) безопасности с указанными параметрами.</maml:para>
+			<maml:para>Get-Group возвращает локальную группу (или группы) безопасности с указанными параметрами.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
@@ -523,9 +523,9 @@
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>New-LocalGroup</name>
+			<name>New-Group</name>
 			<verb>New</verb>
-			<noun>LocalGroup</noun>
+			<noun>Group</noun>
 			<maml:description>
 				<maml:para>Создаёт локальную группу безопасности.</maml:para>
 			</maml:description>
@@ -535,11 +535,11 @@
 			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
-			<maml:para>New-LocalGroup создаёт локальную группу безопасности с указанными аттрибутами.</maml:para>
+			<maml:para>New-Group создаёт локальную группу безопасности с указанными аттрибутами.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>New-LocalGroup</maml:name>
+				<maml:name>New-Group</maml:name>
 				<parameter required="true" position="2" pipelineInput="true (ByValue, ByPropertyName)" globbing="false">
 					<maml:name>Name</maml:name>
 					<parameterValue required="true">String</parameterValue>
@@ -594,7 +594,7 @@
 		<returnValues>
 			<returnValue>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.GroupPrincipal</maml:name>
 					<maml:description>
 						<maml:para>Созданная группа безопасности.</maml:para>
 					</maml:description>
@@ -610,7 +610,7 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>New-LocalGroup -Name 'MyUsers' -Description 'Users of my application';</dev:code>
+				<dev:code>New-Group -Name 'MyUsers' -Description 'Users of my application';</dev:code>
 				<maml:remarks>
 					<maml:para>Создаёт локальную группу безопасности.</maml:para>
 				</maml:remarks>
@@ -618,7 +618,7 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>

@@ -43,13 +43,13 @@
 
 	Get-Group [-SamAccountName <String>] <CommonParameters>
 
-### LocalGroup
-
-#### КРАТКОЕ ОПИСАНИЕ [New-LocalGroup][]
+#### КРАТКОЕ ОПИСАНИЕ [New-Group][]
 
 Создаёт локальную группу безопасности.
 
-	New-LocalGroup [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	New-Group [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+### LocalGroup
 
 #### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroup][]
 
@@ -162,7 +162,7 @@ ADSI путь к указанным объектам безопасности.
 
 #### Get-Group
 
-[Get-LocalGroup][] возвращает локальную группу (или группы) безопасности с указанными параметрами.
+[Get-Group][] возвращает локальную группу (или группы) безопасности с указанными параметрами.
 
 ##### ПСЕВДОНИМЫ
 
@@ -274,17 +274,21 @@ Get-LocalGroup
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-Group)
 
-#### New-LocalGroup
+#### New-Group
 
-[New-LocalGroup][] создаёт локальную группу безопасности с указанными аттрибутами.
+[New-Group][] создаёт локальную группу безопасности с указанными аттрибутами.
+
+##### ПСЕВДОНИМЫ
+
+New-LocalGroup
 
 ##### СИНТАКСИС
 
-	New-LocalGroup [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	New-Group [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
-- System.DirectoryServices.DirectoryEntry
+- System.DirectoryServices.AccountManagement.GroupPrincipal
 Созданная группа безопасности.
 
 ##### ПАРАМЕТРЫ
@@ -292,7 +296,7 @@ Get-LocalGroup
 - `[String] Name`
 	Идентификатор группы безопасности
 	* Тип: [System.String][]
-	* Псевдонимы: Identity
+	* Псевдонимы: SamAccountName
 	* Требуется? да
 	* Позиция? 2
 	* Принимать входные данные конвейера? true (ByValue, ByPropertyName)
@@ -327,11 +331,11 @@ Get-LocalGroup
 
 1. Создаёт локальную группу безопасности.
 
-		New-LocalGroup -Name 'MyUsers' -Description 'Users of my application';
+		New-Group -Name 'MyUsers' -Description 'Users of my application';
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group)
 
 #### Remove-LocalGroup
 
@@ -675,11 +679,10 @@ Get-LocalGroup
 [ADS_NAME_TYPE_ENUM]: <http://msdn.microsoft.com/en-us/library/windows/desktop/aa772267.aspx> 
 [ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
 [Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
-[Get-LocalGroup]: <#get-group> "Возвращает локальную группу безопасности."
 [Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
 [Microsoft.ActiveDirectory.Management.ADGroup]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adgroup.aspx> "ADGroup Class (Microsoft.ActiveDirectory.Management)"
 [Microsoft.ActiveDirectory.Management.ADUser]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.aduser.aspx> "ADUser Class (Microsoft.ActiveDirectory.Management)"
-[New-LocalGroup]: <#new-localgroup> "Создаёт локальную группу безопасности."
+[New-Group]: <#new-group> "Создаёт локальную группу безопасности."
 [Remove-LocalGroup]: <#remove-localgroup> "Удаляет локальную группу безопасности."
 [Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
 [System.Object]: <http://msdn.microsoft.com/ru-ru/library/system.object.aspx> "Object Class (System)"

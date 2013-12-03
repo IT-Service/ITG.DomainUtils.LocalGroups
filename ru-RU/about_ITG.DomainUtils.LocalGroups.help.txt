@@ -43,13 +43,13 @@
 
 	Get-Group [-SamAccountName <String>] <CommonParameters>
 
-### LocalGroup
-
-#### КРАТКОЕ ОПИСАНИЕ [New-LocalGroup][]
+#### КРАТКОЕ ОПИСАНИЕ [New-Group][]
 
 Создаёт локальную группу безопасности.
 
-	New-LocalGroup [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	New-Group [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+### LocalGroup
 
 #### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroup][]
 
@@ -94,7 +94,7 @@
 [ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
 [Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
 [Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
-[New-LocalGroup]: <#new-localgroup> "Создаёт локальную группу безопасности."
+[New-Group]: <#new-group> "Создаёт локальную группу безопасности."
 [Remove-LocalGroup]: <#remove-localgroup> "Удаляет локальную группу безопасности."
 [Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
 [Test-LocalGroup]: <#test-localgroup> "Проверяет наличие локальной группы безопасности."

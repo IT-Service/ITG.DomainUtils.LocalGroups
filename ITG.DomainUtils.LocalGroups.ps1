@@ -1,22 +1,22 @@
-Function New-LocalGroup {
+Function New-Group {
 <#
 .Synopsis
 	Создаёт локальную группу безопасности. 
 .Description
-	New-LocalGroup создаёт локальную группу безопасности с указанными аттрибутами.
+	New-Group создаёт локальную группу безопасности с указанными аттрибутами.
 .Outputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.GroupPrincipal
 	Созданная группа безопасности.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group
 .Example
-	New-LocalGroup -Name 'MyUsers' -Description 'Users of my application';
+	New-Group -Name 'MyUsers' -Description 'Users of my application';
 	Создаёт локальную группу безопасности.
 #>
 	[CmdletBinding(
 		SupportsShouldProcess = $true
 		, ConfirmImpact = 'Medium'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group'
 	)]
 
 	param (
@@ -26,16 +26,17 @@ Function New-LocalGroup {
 			, Position = 1
 			, ValueFromPipeline = $true
 			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'GroupProperties'
 		)]
+        [Alias( 'SamAccountName' )]
 		[String]
-		[Alias( 'Identity' )]
 		$Name
 	,
 		# Описание группы безопасности
 		[Parameter(
 			Mandatory = $false
-			, ValueFromPipeline = $false
 			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'GroupProperties'
 		)]
 		[String]
 		$Description
@@ -47,7 +48,9 @@ Function New-LocalGroup {
 
 	begin {
 		try {
-			[System.DirectoryServices.DirectoryEntry] $Computer = [ADSI]"WinNT://$Env:COMPUTERNAME,Computer";
+			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
+				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
+			;
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -56,13 +59,24 @@ Function New-LocalGroup {
 	}
 	process {
 		try {
-			if ( $PSCmdlet.ShouldProcess( "$Name" ) ) {
-				$Group = $Computer.Create( 'Group', $Name );
-				$Group.SetInfo();
-				$Group.Description = $Description;
-				$Group.SetInfo();
-				if ( $PassThru ) { return $Group };
+			$Params = @{};
+			foreach( $Param in ( Get-Command New-Group ).Parameters.Values ) {
+				if (
+					$Param.ParameterSets.ContainsKey( 'GroupProperties' ) `
+					-and $PSBoundParameters.ContainsKey( $Param.Name )
+				) {
+					$Params.( $Param.Name ) = $PSBoundParameters.( $Param.Name );
+				};
 			};
+			[System.DirectoryServices.AccountManagement.GroupPrincipal] $Group = New-Object -Type System.DirectoryServices.AccountManagement.GroupPrincipal `
+				-ArgumentList ( $ComputerContext ) `
+				-Property $Params `
+			;
+			$Group.IsSecurityGroup = $true;
+			if ( $PSCmdlet.ShouldProcess( "$Name" ) ) {
+				$Group.Save();
+			};
+			if ( $PassThru ) { return $Group };
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -71,12 +85,14 @@ Function New-LocalGroup {
 	}
 }
 
+New-Alias -Name New-LocalGroup -Value New-Group -Force;
+
 Function Get-Group {
 <#
 .Synopsis
 	Возвращает локальную группу безопасности. 
 .Description
-	Get-LocalGroup возвращает локальную группу (или группы) безопасности с указанными параметрами.
+	Get-Group возвращает локальную группу (или группы) безопасности с указанными параметрами.
 .Inputs
 	System.DirectoryServices.AccountManagement.GroupPrincipal
 	Объект, определяющий параметры поиска.
