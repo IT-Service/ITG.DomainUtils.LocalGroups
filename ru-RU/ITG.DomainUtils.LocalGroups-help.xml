@@ -874,9 +874,9 @@
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Test-LocalGroupMember</name>
+			<name>Test-GroupMember</name>
 			<verb>Test</verb>
-			<noun>LocalGroupMember</noun>
+			<noun>GroupMember</noun>
 			<maml:description>
 				<maml:para>Проверяет наличие учётных записей в указанной локальной группе безопасности.</maml:para>
 			</maml:description>
@@ -886,17 +886,31 @@
 			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
-			<maml:para>Get-LocalGroupMember проверяет наличие учётных записей в указанной локальной группе безопасности. В том числе - и с учётом транзитивности при указании флага `-Recursive`</maml:para>
+			<maml:para>Test-GroupMember проверяет наличие учётных записей в указанной локальной группе безопасности. В том числе - и с учётом транзитивности при указании флага `-Recursive`</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Test-LocalGroupMember</maml:name>
-				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+				<maml:name>Test-GroupMember</maml:name>
+				<parameter required="true" position="named" pipelineInput="false" globbing="false">
 					<maml:name>Group</maml:name>
-					<parameterValue required="true">DirectoryEntry</parameterValue>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
 				</parameter>
-				<parameter required="true" position="3" pipelineInput="true (ByValue)" globbing="false">
-					<maml:name>Identity</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+					<maml:name>Sid</maml:name>
+					<parameterValue required="true">SecurityIdentifier</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Recursive</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Test-GroupMember</maml:name>
+				<parameter required="true" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Member</maml:name>
 					<parameterValue required="true">Object</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
@@ -905,17 +919,24 @@
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="2" pipelineInput="false" globbing="false">
+			<parameter required="true" position="named" pipelineInput="false" globbing="false">
 				<maml:name>Group</maml:name>
 				<maml:description>
 					<maml:para>Группа безопасности</maml:para>
 				</maml:description>
-				<parameterValue required="True">DirectoryEntry</parameterValue>
+				<parameterValue required="True">GroupPrincipal</parameterValue>
 			</parameter>
-			<parameter required="true" position="3" pipelineInput="true (ByValue)" globbing="false">
-				<maml:name>Identity</maml:name>
+			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+				<maml:name>Sid</maml:name>
 				<maml:description>
-					<maml:para>Объект безопасности для проверки членства в указанной группе</maml:para>
+					<maml:para>Объект безопасности для проверки членства в указанной группе, точнее - его Sid. При передаче по конвейеру принимает Sid как локальных учётных записей, так и объектов AD.</maml:para>
+				</maml:description>
+				<parameterValue required="True">SecurityIdentifier</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="false" globbing="false">
+				<maml:name>Member</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности для проверки членства в указанной группе.</maml:para>
 				</maml:description>
 				<parameterValue required="True">Object</parameterValue>
 			</parameter>
@@ -931,7 +952,7 @@
 		<inputTypes>
 			<inputType>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.Principal</maml:name>
 					<maml:description>
 						<maml:para>Учётные записи и группы, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
 					</maml:description>
@@ -942,24 +963,13 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>Microsoft.ActiveDirectory.Management.ADUser</maml:name>
+					<maml:name>Microsoft.ActiveDirectory.Management.ADAccount</maml:name>
 					<maml:description>
 						<maml:para>Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
 					<maml:para>Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
-				</maml:description>
-			</inputType>
-			<inputType>
-				<dev:type>
-					<maml:name>Microsoft.ActiveDirectory.Management.ADGroup</maml:name>
-					<maml:description>
-						<maml:para>Группы AD, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Группы AD, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>
@@ -982,15 +992,25 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Test-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Member ( Get-ADUser 'admin-sergey.s.betke' ) -Recursive;</dev:code>
+				<dev:code>Get-ADUser 'admin-sergey.s.betke' | Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Recursive;</dev:code>
 				<maml:remarks>
 					<maml:para>Проверяем, является ли пользователь `username` членом локальной группы безопасности Пользователи с учётом транзитивности.</maml:para>
+				</maml:remarks>
+			</example>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 2 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Member (Get-ADUser 'admin-sergey.s.betke');</dev:code>
+				<maml:remarks>
+					<maml:para>Проверяем, является ли пользователь `username` членом локальной группы безопасности Пользователи.</maml:para>
 				</maml:remarks>
 			</example>
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-GroupMember</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>

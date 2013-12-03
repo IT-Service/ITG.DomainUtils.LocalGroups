@@ -71,6 +71,14 @@
 
 	Get-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
 
+#### КРАТКОЕ ОПИСАНИЕ [Test-GroupMember][]
+
+Проверяет наличие учётных записей в указанной локальной группе безопасности.
+
+	Test-GroupMember -Group <GroupPrincipal> -Sid <SecurityIdentifier> [-Recursive] <CommonParameters>
+
+	Test-GroupMember -Group <GroupPrincipal> -Member <Object> [-Recursive] <CommonParameters>
+
 ### LocalGroupMember
 
 #### КРАТКОЕ ОПИСАНИЕ [Add-LocalGroupMember][]
@@ -85,12 +93,6 @@
 
 	Remove-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Test-LocalGroupMember][]
-
-Проверяет наличие учётных записей в указанной локальной группе безопасности.
-
-	Test-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-Recursive] <CommonParameters>
-
 
 [Add-LocalGroupMember]: <#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
 [ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
@@ -100,7 +102,7 @@
 [Remove-Group]: <#remove-group> "Удаляет локальную группу безопасности."
 [Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
 [Test-Group]: <#test-group> "Проверяет наличие локальной группы безопасности."
-[Test-LocalGroupMember]: <#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
+[Test-GroupMember]: <#test-groupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
 
 ---------------------------------------
 

@@ -71,6 +71,14 @@
 
 	Get-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
 
+#### КРАТКОЕ ОПИСАНИЕ [Test-GroupMember][]
+
+Проверяет наличие учётных записей в указанной локальной группе безопасности.
+
+	Test-GroupMember -Group <GroupPrincipal> -Sid <SecurityIdentifier> [-Recursive] <CommonParameters>
+
+	Test-GroupMember -Group <GroupPrincipal> -Member <Object> [-Recursive] <CommonParameters>
+
 ### LocalGroupMember
 
 #### КРАТКОЕ ОПИСАНИЕ [Add-LocalGroupMember][]
@@ -84,12 +92,6 @@
 Удаляет учётные записи и/или группы из указанной локальной группы безопасности.
 
 	Remove-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
-
-#### КРАТКОЕ ОПИСАНИЕ [Test-LocalGroupMember][]
-
-Проверяет наличие учётных записей в указанной локальной группе безопасности.
-
-	Test-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-Recursive] <CommonParameters>
 
 ОПИСАНИЕ
 --------
@@ -483,6 +485,89 @@ Get-LocalGroupMember
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-GroupMember)
 
+#### Test-GroupMember
+
+[Test-GroupMember][] проверяет наличие учётных записей в указанной
+локальной группе безопасности.
+В том числе - и с учётом транзитивности при указании флага `-Recursive`
+
+##### ПСЕВДОНИМЫ
+
+Test-LocalGroupMember
+
+##### СИНТАКСИС
+
+	Test-GroupMember -Group <GroupPrincipal> -Sid <SecurityIdentifier> [-Recursive] <CommonParameters>
+
+	Test-GroupMember -Group <GroupPrincipal> -Member <Object> [-Recursive] <CommonParameters>
+
+##### ВХОДНЫЕ ДАННЫЕ
+
+- System.DirectoryServices.AccountManagement.Principal
+Учётные записи и группы, членство которых необходимо проверить в локальной группе безопасности.
+- [Microsoft.ActiveDirectory.Management.ADAccount][]
+Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.
+
+##### ВЫХОДНЫЕ ДАННЫЕ
+
+- Bool
+Наличие ( `$true` ) или отсутствие ( `$false` ) указанных объектов в указанной группе
+
+##### ПАРАМЕТРЫ
+
+- `[GroupPrincipal] Group`
+	Группа безопасности
+	* Тип: System.DirectoryServices.AccountManagement.GroupPrincipal
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? false
+	* Принимать подстановочные знаки? нет
+
+- `[SecurityIdentifier] Sid`
+	Объект безопасности для проверки членства в указанной группе, точнее - его Sid.
+	При передаче по конвейеру принимает Sid как локальных учётных записей, так и объектов AD.
+	* Тип: [System.Security.Principal.SecurityIdentifier][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[Object] Member`
+	Объект безопасности для проверки членства в указанной группе.
+	* Тип: [System.Object][]
+	* Псевдонимы: User
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? false
+	* Принимать подстановочные знаки? нет
+
+- `[SwitchParameter] Recursive`
+	Запросить членов группы с учётом транзитивности
+	
+
+- `<CommonParameters>`
+	Этот командлет поддерживает общие параметры: Verbose, Debug,
+	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
+	[about_CommonParameters][].
+
+
+##### ПРИМЕРЫ
+
+1. Проверяем, является ли пользователь `username` членом локальной группы безопасности
+Пользователи с учётом транзитивности.
+
+		Get-ADUser 'admin-sergey.s.betke' | Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Recursive;
+
+2. Проверяем, является ли пользователь `username` членом локальной группы безопасности
+Пользователи.
+
+		Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Member (Get-ADUser 'admin-sergey.s.betke');
+
+##### ССЫЛКИ ПО ТЕМЕ
+
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-GroupMember)
+
 #### Add-LocalGroupMember
 
 Добавляет учётные записи и/или группы в указанную локальную группу безопасности.
@@ -616,71 +701,6 @@ Get-LocalGroupMember
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember)
 
-#### Test-LocalGroupMember
-
-[Get-LocalGroupMember][] проверяет наличие учётных записей в указанной
-локальной группе безопасности.
-В том числе - и с учётом транзитивности при указании флага `-Recursive`
-
-##### СИНТАКСИС
-
-	Test-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-Recursive] <CommonParameters>
-
-##### ВХОДНЫЕ ДАННЫЕ
-
-- System.DirectoryServices.DirectoryEntry
-Учётные записи и группы, членство которых необходимо проверить в локальной группе безопасности.
-- [Microsoft.ActiveDirectory.Management.ADUser][]
-Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.
-- [Microsoft.ActiveDirectory.Management.ADGroup][]
-Группы AD, членство которых необходимо проверить в локальной группе безопасности.
-
-##### ВЫХОДНЫЕ ДАННЫЕ
-
-- Bool
-Наличие ( `$true` ) или отсутствие ( `$false` ) указанных объектов в указанной группе
-
-##### ПАРАМЕТРЫ
-
-- `[DirectoryEntry] Group`
-	Группа безопасности
-	* Тип: System.DirectoryServices.DirectoryEntry
-	* Требуется? да
-	* Позиция? 2
-	* Принимать входные данные конвейера? false
-	* Принимать подстановочные знаки? нет
-
-- `[Object] Identity`
-	Объект безопасности для проверки членства в указанной группе
-	* Тип: [System.Object][]
-	* Псевдонимы: User, Member
-	* Требуется? да
-	* Позиция? 3
-	* Принимать входные данные конвейера? true (ByValue)
-	* Принимать подстановочные знаки? нет
-
-- `[SwitchParameter] Recursive`
-	Запросить членов группы с учётом транзитивности
-	
-
-- `<CommonParameters>`
-	Этот командлет поддерживает общие параметры: Verbose, Debug,
-	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-	[about_CommonParameters][].
-
-
-##### ПРИМЕРЫ
-
-1. Проверяем, является ли пользователь `username` членом локальной группы безопасности
-Пользователи с учётом транзитивности.
-
-		Test-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Member ( Get-ADUser 'admin-sergey.s.betke' ) -Recursive;
-
-##### ССЫЛКИ ПО ТЕМЕ
-
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember)
-
 
 [about_CommonParameters]: <http://go.microsoft.com/fwlink/?LinkID=113216> "Describes the parameters that can be used with any cmdlet."
 [Add-LocalGroupMember]: <#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
@@ -688,7 +708,7 @@ Get-LocalGroupMember
 [ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
 [Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
 [Get-GroupMember]: <#get-groupmember> "Возвращает членов локальной группы безопасности."
-[Get-LocalGroupMember]: <#get-groupmember> "Возвращает членов локальной группы безопасности."
+[Microsoft.ActiveDirectory.Management.ADAccount]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adaccount.aspx> "ADAccount Class (Microsoft.ActiveDirectory.Management)"
 [Microsoft.ActiveDirectory.Management.ADGroup]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adgroup.aspx> "ADGroup Class (Microsoft.ActiveDirectory.Management)"
 [Microsoft.ActiveDirectory.Management.ADUser]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.aduser.aspx> "ADUser Class (Microsoft.ActiveDirectory.Management)"
 [New-Group]: <#new-group> "Создаёт локальную группу безопасности."
@@ -698,7 +718,7 @@ Get-LocalGroupMember
 [System.Security.Principal.SecurityIdentifier]: <http://msdn.microsoft.com/ru-ru/library/system.security.principal.securityidentifier.aspx> "SecurityIdentifier Class (System.Security.Principal)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"
 [Test-Group]: <#test-group> "Проверяет наличие локальной группы безопасности."
-[Test-LocalGroupMember]: <#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
+[Test-GroupMember]: <#test-groupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
 
 ---------------------------------------
 

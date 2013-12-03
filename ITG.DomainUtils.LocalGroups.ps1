@@ -462,56 +462,64 @@ Function Get-GroupMember {
 
 New-Alias -Name Get-LocalGroupMember -Value Get-GroupMember -Force;
 
-Function Test-LocalGroupMember {
+Function Test-GroupMember {
 <#
 .Synopsis
 	Проверяет наличие учётных записей в указанной локальной группе безопасности. 
 .Description
-	Get-LocalGroupMember проверяет наличие учётных записей в указанной
+	Test-GroupMember проверяет наличие учётных записей в указанной
 	локальной группе безопасности.
 	В том числе - и с учётом транзитивности при указании флага `-Recursive`
 .Inputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.Principal
 	Учётные записи и группы, членство которых необходимо проверить в локальной группе безопасности.
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADUser
+	Microsoft.ActiveDirectory.Management.ADAccount
 	Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.
-.Inputs
-	Microsoft.ActiveDirectory.Management.ADGroup
-	Группы AD, членство которых необходимо проверить в локальной группе безопасности.
 .Outputs
 	Bool
 	Наличие ( `$true` ) или отсутствие ( `$false` ) указанных объектов в указанной группе
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-GroupMember
 .Example
-	Test-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Member ( Get-ADUser 'admin-sergey.s.betke' ) -Recursive;
+	Get-ADUser 'admin-sergey.s.betke' | Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Recursive;
 	Проверяем, является ли пользователь `username` членом локальной группы безопасности
 	Пользователи с учётом транзитивности.
+.Example
+	Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Member (Get-ADUser 'admin-sergey.s.betke');
+	Проверяем, является ли пользователь `username` членом локальной группы безопасности
+	Пользователи.
 #>
 	[CmdletBinding(
-		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember'
+		DefaultParameterSetName = 'Sid'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-GroupMember'
 	)]
 
 	param (
 		# Группа безопасности
 		[Parameter(
 			Mandatory = $true
-			, Position = 1
-			, ValueFromPipeline = $false
 		)]
-		[System.DirectoryServices.DirectoryEntry]
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
 		$Group
 	,
-		# Объект безопасности для проверки членства в указанной группе
+		# Объект безопасности для проверки членства в указанной группе, точнее - его Sid.
+		# При передаче по конвейеру принимает Sid как локальных учётных записей, так и объектов AD.
 		[Parameter(
 			Mandatory = $true
-			, Position = 2
-			, ValueFromPipeline = $true
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Sid'
 		)]
-		[Alias( 'Member' )]
+		[System.Security.Principal.SecurityIdentifier]
+		$Sid
+	,
+		# Объект безопасности для проверки членства в указанной группе.
+		[Parameter(
+			Mandatory = $true
+			, ParameterSetName = 'Member'
+		)]
 		[Alias( 'User' )]
-		$Identity
+		$Member
 	,
 		# Запросить членов группы с учётом транзитивности
 		[Switch]
@@ -519,19 +527,29 @@ Function Test-LocalGroupMember {
 	)
 
 	begin {
-		$Members = @(
-			Get-LocalGroupMember `
-				-Identity $Group `
+		$MembersSids = @(
+			Get-GroupMember `
+				-Group $Group `
 				-Recursive:$Recursive `
-			| Select-Object -ExpandProperty Path `
+			| Select-Object -ExpandProperty Sid `
 		);
 	}
 	process {
 		try {
-			$Identity `
-			| ConvertTo-ADSIPath `
-			| % {
-				$Members -contains $_;
+   			switch ( $PsCmdlet.ParameterSetName ) {
+				'Sid' {
+					$MembersSids -contains $Sid;
+					break;
+				}
+				'Member' {
+					Member `
+					| Test-GroupMember `
+						-Group $Group `
+						-Recursive:$Recursive `
+						-Verbose:$VerbosePreference `
+					;
+					break;
+				}
 			};
 		} catch {
 			Write-Error `
@@ -540,6 +558,8 @@ Function Test-LocalGroupMember {
 		};
 	}
 }
+
+New-Alias -Name Test-LocalGroupMember -Value Test-GroupMember -Force;
 
 Function Add-LocalGroupMember {
 <#
