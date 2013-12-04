@@ -14,7 +14,7 @@
 RootModule = 'ITG.DomainUtils.LocalGroups.psm1'
 
 # Номер версии данного модуля.
-ModuleVersion = '1.0.0'
+ModuleVersion = '2.0.0'
 
 # Уникальный идентификатор данного модуля
 GUID = '820B6CFA-3D70-42E4-8C6E-276742D0CC4B'
@@ -64,6 +64,7 @@ RequiredModules = @(
 
 # Сборки, которые должны быть загружены перед импортированием данного модуля
 RequiredAssemblies = @(
+	'System.DirectoryServices.AccountManagement'
 )
 
 # Файлы скрипта (.ps1), которые запускаются в среде вызывающей стороны перед импортированием данного модуля
@@ -98,6 +99,7 @@ FileList = `
 	'ITG.DomainUtils.LocalGroups.psm1' `
 ,   'ITG.DomainUtils.LocalGroups.psd1' `
 ,	'ITG.DomainUtils.LocalGroups.ps1' `
+,	'ITG.DomainUtils.NameConvertors.ps1' `
 ;
 
 # Личные данные, передаваемые в модуль, указанный в параметре ModuleToProcess

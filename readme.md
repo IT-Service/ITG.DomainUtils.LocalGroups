@@ -10,160 +10,155 @@
 Для модульных тестов использую проект [pester](https://github.com/pester/pester).
 
 
-Версия модуля: **1.0.0**
+Версия модуля: **2.0.0**
 
 ПОДДЕРЖИВАЮТСЯ КОМАНДЛЕТЫ
 -------------------------
 
-### ADSIPath
+### Group
 
-#### КРАТКОЕ ОПИСАНИЕ [ConvertTo-ADSIPath][]
-
-Конвертирует идентификатор переданного объекта безопасности в ADSI путь.
-
-	ConvertTo-ADSIPath -Path <String> <CommonParameters>
-
-	ConvertTo-ADSIPath -DistinguishedName <String> <CommonParameters>
-
-### LocalGroup
-
-#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroup][]
+#### КРАТКОЕ ОПИСАНИЕ [Get-Group][]
 
 Возвращает локальную группу безопасности.
 
-	Get-LocalGroup <CommonParameters>
+	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-	Get-LocalGroup [-Name] <String> <CommonParameters>
+	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [New-LocalGroup][]
+	Get-Group [-Name <String>] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [New-Group][]
 
 Создаёт локальную группу безопасности.
 
-	New-LocalGroup [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	New-Group [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroup][]
+#### КРАТКОЕ ОПИСАНИЕ [Remove-Group][]
 
 Удаляет локальную группу безопасности.
 
-	Remove-LocalGroup [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+	Remove-Group -Sid <SecurityIdentifier> [-WhatIf] [-Confirm] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Test-LocalGroup][]
+	Remove-Group [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group -Identity <GroupPrincipal> [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Test-Group][]
 
 Проверяет наличие локальной группы безопасности.
 
-	Test-LocalGroup [-Name] <String> <CommonParameters>
+	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-### LocalGroupMember
+	Test-Group [-Name] <String> <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Add-LocalGroupMember][]
+### GroupMember
+
+#### КРАТКОЕ ОПИСАНИЕ [Add-GroupMember][]
 
 Добавляет учётные записи и/или группы в указанную локальную группу безопасности.
 
-	Add-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Add-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroupMember][]
+	Add-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Get-GroupMember][]
 
 Возвращает членов локальной группы безопасности.
 
-	Get-LocalGroupMember [-Identity] <DirectoryEntry> [-Recursive] <CommonParameters>
+	Get-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroupMember][]
+#### КРАТКОЕ ОПИСАНИЕ [Remove-GroupMember][]
 
 Удаляет учётные записи и/или группы из указанной локальной группы безопасности.
 
-	Remove-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Remove-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-WhatIf] [-Confirm] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Test-LocalGroupMember][]
+	Remove-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Test-GroupMember][]
 
 Проверяет наличие учётных записей в указанной локальной группе безопасности.
 
-	Test-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-Recursive] <CommonParameters>
+	Test-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-Recursive] <CommonParameters>
 
 ОПИСАНИЕ
 --------
 
-#### ConvertTo-ADSIPath
+#### Get-Group
 
-Конвертирует идентификатор переданного объекта безопасности в ADSI путь.
+[Get-Group][] возвращает локальную группу (или группы) безопасности с указанными параметрами.
+
+##### ПСЕВДОНИМЫ
+
+Get-LocalGroup
 
 ##### СИНТАКСИС
 
-	ConvertTo-ADSIPath -Path <String> <CommonParameters>
+	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-	ConvertTo-ADSIPath -DistinguishedName <String> <CommonParameters>
+	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
+
+	Get-Group [-Name <String>] <CommonParameters>
 
 ##### ВХОДНЫЕ ДАННЫЕ
 
-- System.DirectoryServices.DirectoryEntry
-Учётные записи и группы, идентификатор которых следует проверить / преобразовать.
-- [Microsoft.ActiveDirectory.Management.ADUser][]
-Учётные записи и группы AD, DN которых следует преобразовать.
+- System.DirectoryServices.AccountManagement.GroupPrincipal
+Объект, определяющий параметры поиска.
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
-- [System.String][]
-ADSI путь к указанным объектам безопасности.
+- System.DirectoryServices.AccountManagement.GroupPrincipal
+Объект, представляющий группу безопасности.
 
 ##### ПАРАМЕТРЫ
 
-- `[String] Path`
-	ADSI путь, преобразование не требуется
+- `[String] Filter`
+	Идентификатор группы безопасности
 	* Тип: [System.String][]
-	* Требуется? да
+	* Требуется? нет
+	* Позиция? 2
+	* Значение по умолчанию `*`
+	* Принимать входные данные конвейера? false
+	* Принимать подстановочные знаки? нет
+
+- `[String] Description`
+	Описание искомой группы безопасности
+	* Тип: [System.String][]
+	* Требуется? нет
 	* Позиция? named
 	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
-
-- `[String] DistinguishedName`
-	DN для преобразования в ADSI Path
-	* Тип: [System.String][]
-	* Требуется? да
-	* Позиция? named
-	* Принимать входные данные конвейера? true (ByPropertyName)
-	* Принимать подстановочные знаки? нет
-
-- `<CommonParameters>`
-	Этот командлет поддерживает общие параметры: Verbose, Debug,
-	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
-	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
-	[about_CommonParameters][].
-
-
-##### ПРИМЕРЫ
-
-1. В результате получим `WinNT://CSM/admin-sergey.s.betke`.
-
-		Get-ADUser 'admin-sergey.s.betke' | ConvertTo-ADSIPath;
-
-##### ССЫЛКИ ПО ТЕМЕ
-
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#ConvertTo-ADSIPath)
-- [ADS_NAME_TYPE_ENUM][]
-
-#### Get-LocalGroup
-
-[Get-LocalGroup][] возвращает локальную группу (или группы) безопасности с указанными параметрами.
-
-##### СИНТАКСИС
-
-	Get-LocalGroup <CommonParameters>
-
-	Get-LocalGroup [-Name] <String> <CommonParameters>
-
-##### ВЫХОДНЫЕ ДАННЫЕ
-
-- System.DirectoryServices.DirectoryEntry
-ADSI объект, представляющий группу безопасности.
-
-##### ПАРАМЕТРЫ
 
 - `[String] Name`
 	Идентификатор группы безопасности
 	* Тип: [System.String][]
-	* Псевдонимы: Identity
+	* Требуется? нет
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[SecurityIdentifier] Sid`
+	Идентификатор безопасности искомой группы безопасности
+	* Тип: [System.Security.Principal.SecurityIdentifier][]
 	* Требуется? да
-	* Позиция? 2
-	* Принимать входные данные конвейера? true (ByValue, ByPropertyName)
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
 
 - `<CommonParameters>`
@@ -177,27 +172,35 @@ ADSI объект, представляющий группу безопасно�
 
 1. Возвращает все локальные группы безопасности.
 
-		Get-LocalGroup;
+		Get-Group -Filter '*';
 
 2. Возвращает группу безопасности Пользователи.
 
-		Get-LocalGroup -Name 'Пользователи';
+		Get-Group -Name 'Пользователи';
+
+3. Возвращает локальные группы безопасности: Администраторы и другие, имена которых начинаются на 'Адм'.
+
+		Get-Group -Filter 'Адм*';
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-Group)
 
-#### New-LocalGroup
+#### New-Group
 
-[New-LocalGroup][] создаёт локальную группу безопасности с указанными аттрибутами.
+[New-Group][] создаёт локальную группу безопасности с указанными аттрибутами.
+
+##### ПСЕВДОНИМЫ
+
+New-LocalGroup
 
 ##### СИНТАКСИС
 
-	New-LocalGroup [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	New-Group [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
-- System.DirectoryServices.DirectoryEntry
+- System.DirectoryServices.AccountManagement.GroupPrincipal
 Созданная группа безопасности.
 
 ##### ПАРАМЕТРЫ
@@ -205,7 +208,7 @@ ADSI объект, представляющий группу безопасно�
 - `[String] Name`
 	Идентификатор группы безопасности
 	* Тип: [System.String][]
-	* Псевдонимы: Identity
+	* Псевдонимы: SamAccountName
 	* Требуется? да
 	* Позиция? 2
 	* Принимать входные данные конвейера? true (ByValue, ByPropertyName)
@@ -240,35 +243,58 @@ ADSI объект, представляющий группу безопасно�
 
 1. Создаёт локальную группу безопасности.
 
-		New-LocalGroup -Name 'MyUsers' -Description 'Users of my application';
+		New-Group -Name 'MyUsers' -Description 'Users of my application';
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group)
 
-#### Remove-LocalGroup
+#### Remove-Group
 
-[Remove-LocalGroup][] удаляет локальную группу (или группы) безопасности, переданные по конвейеру.
+[Remove-Group][] удаляет локальную группу (или группы) безопасности, переданную по конвейеру.
+
+##### ПСЕВДОНИМЫ
+
+Remove-LocalGroup
 
 ##### СИНТАКСИС
 
-	Remove-LocalGroup [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+	Remove-Group -Sid <SecurityIdentifier> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group -Identity <GroupPrincipal> [-WhatIf] [-Confirm] <CommonParameters>
 
 ##### ВХОДНЫЕ ДАННЫЕ
 
-- System.DirectoryServices.DirectoryEntry
-Группа безопасности.
+- System.DirectoryServices.AccountManagement.GroupPrincipal
+Группа безопасности, которую следует удалить.
 
 ##### ПАРАМЕТРЫ
 
 - `[String] Name`
-	Группа безопасности к удалению
 	Идентификатор группы безопасности
 	* Тип: [System.String][]
-	* Псевдонимы: Identity
 	* Требуется? да
 	* Позиция? 2
 	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[SecurityIdentifier] Sid`
+	Идентификатор безопасности искомой группы безопасности
+	* Тип: [System.Security.Principal.SecurityIdentifier][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[GroupPrincipal] Identity`
+	Группа безопасности к удалению
+	Идентификатор группы безопасности
+	* Тип: System.DirectoryServices.AccountManagement.GroupPrincipal
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
 	* Принимать подстановочные знаки? нет
 
 - `[SwitchParameter] WhatIf`
@@ -286,21 +312,27 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ПРИМЕРЫ
 
-1. Удаляет группу безопасности 'Пользователи'.
+1. Удаляет группы безопасности, имена которых начинаются с 'test'.
 
-		Get-LocalGroup -Name 'Пользователи' | Remove-LocalGroup;
+		Get-Group -Filter 'test*' | Remove-Group -Verbose;
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-Group)
 
-#### Test-LocalGroup
+#### Test-Group
 
 Проверяет наличие локальной группы безопасности.
 
+##### ПСЕВДОНИМЫ
+
+Test-LocalGroup
+
 ##### СИНТАКСИС
 
-	Test-LocalGroup [-Name] <String> <CommonParameters>
+	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
+
+	Test-Group [-Name] <String> <CommonParameters>
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
@@ -311,10 +343,17 @@ ADSI объект, представляющий группу безопасно�
 - `[String] Name`
 	Идентификатор группы безопасности
 	* Тип: [System.String][]
-	* Псевдонимы: Identity
 	* Требуется? да
 	* Позиция? 2
 	* Принимать входные данные конвейера? true (ByValue, ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[SecurityIdentifier] Sid`
+	Идентификатор безопасности искомой группы безопасности
+	* Тип: [System.Security.Principal.SecurityIdentifier][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
 
 - `<CommonParameters>`
@@ -326,45 +365,80 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group)
 
-#### Add-LocalGroupMember
+#### Add-GroupMember
 
 Добавляет учётные записи и/или группы в указанную локальную группу безопасности.
 В качестве добавляемых учётных записей и групп могут быть использованы как локальные
 учётные записи / группы, так и доменные учётные записи / группы (`Get-ADUser`,
 `Get-ADGroup`).
 
+##### ПСЕВДОНИМЫ
+
+Add-LocalGroupMember
+
 ##### СИНТАКСИС
 
-	Add-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Add-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 ##### ВХОДНЫЕ ДАННЫЕ
 
-- System.DirectoryServices.DirectoryEntry
+- System.DirectoryServices.AccountManagement.Principal
 Учётные записи и группы, которые необходимо включить в локальную группу безопасности.
-- [Microsoft.ActiveDirectory.Management.ADUser][]
+- [Microsoft.ActiveDirectory.Management.ADAccount][]
 Учётные записи AD, которые необходимо включить в локальную группу безопасности.
-- [Microsoft.ActiveDirectory.Management.ADGroup][]
-Группы AD, которые необходимо включить в локальную группу безопасности.
+- System.DirectoryServices.DirectoryEntry
+Учётные записи и группы ADSI, которые необходимо включить в локальную группу безопасности.
 
 ##### ПАРАМЕТРЫ
 
-- `[DirectoryEntry] Group`
+- `[GroupPrincipal] Group`
 	Группа безопасности
-	* Тип: System.DirectoryServices.DirectoryEntry
+	* Тип: System.DirectoryServices.AccountManagement.GroupPrincipal
 	* Требуется? да
 	* Позиция? 2
 	* Принимать входные данные конвейера? false
 	* Принимать подстановочные знаки? нет
 
-- `[Object] Identity`
+- `[Principal[]] Member`
 	Объект безопасности для добавления в группу
-	* Тип: [System.Object][]
-	* Псевдонимы: User, Member
+	* Тип: System.DirectoryServices.AccountManagement.Principal[]
 	* Требуется? да
-	* Позиция? 3
+	* Позиция? named
 	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[ADAccount[]] ADMember`
+	Объект безопасности AD для добавления в группу
+	* Тип: [Microsoft.ActiveDirectory.Management.ADAccount][][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[DirectoryEntry[]] ADSIMember`
+	Объект безопасности ADSI для добавления в группу
+	* Тип: System.DirectoryServices.DirectoryEntry[]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[Array] OtherMember`
+	Объект безопасности в любом из трёх выше указанных типов для добавления в группу
+	Использовать данный параметр стоит только для обеспечения совместимости при переходе
+	от использования одного набора классов к другому.
+	* Тип: [System.Array][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? false
 	* Принимать подстановочные знаки? нет
 
 - `[SwitchParameter] PassThru`
@@ -389,42 +463,45 @@ ADSI объект, представляющий группу безопасно�
 1. Добавляем указанного пользователя домена в локальную группы безопасности
 "Пользователи".
 
-		Get-ADUser 'admin-sergey.s.betke' | Add-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );
+		Get-ADUser 'admin-sergey.s.betke' | Add-GroupMember -Group ( Get-Group -Name Пользователи );
+
+2. Добавляем указанного локального пользователя в локальную группы безопасности
+"Пользователи".
+
+		Get-ADGroup 'Администраторы' | Add-GroupMember -Group ( Get-Group -Name Пользователи );
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-GroupMember)
 
-#### Get-LocalGroupMember
+#### Get-GroupMember
 
-[Get-LocalGroupMember][] возвращает членов указанной локальной группы безопасности.
+[Get-GroupMember][] возвращает членов указанной локальной группы безопасности.
 В том числе - и с учётом транзитивности при указании флага `-Recursive`
+
+##### ПСЕВДОНИМЫ
+
+Get-LocalGroupMember
 
 ##### СИНТАКСИС
 
-	Get-LocalGroupMember [-Identity] <DirectoryEntry> [-Recursive] <CommonParameters>
+	Get-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
 
 ##### ВХОДНЫЕ ДАННЫЕ
 
-- System.DirectoryServices.DirectoryEntry
+- System.DirectoryServices.AccountManagement.GroupPrincipal
 Группа безопасности.
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
-- System.DirectoryServices.DirectoryEntry
+- System.DirectoryServices.AccountManagement.Principal
 Члены указанной группы безопасности.
-- PSObject
-Для групп типа `NT AUTHORITY/ИНТЕРАКТИВНЫЕ` возвращён будет объект,
-содержащий свойства `Path`, `Name`, `objectSid`, `groupType`.
-`SchemaClassName` будет установлен в `Group`, `AuthenticationType` в `Secure`.
-Дополнительно будет установлен аттрибут `NtAuthority` в `$true`.
 
 ##### ПАРАМЕТРЫ
 
-- `[DirectoryEntry] Identity`
+- `[GroupPrincipal] Group`
 	Группа безопасности
-	* Тип: System.DirectoryServices.DirectoryEntry
-	* Псевдонимы: Group
+	* Тип: System.DirectoryServices.AccountManagement.GroupPrincipal
 	* Требуется? да
 	* Позиция? 2
 	* Принимать входные данные конвейера? true (ByValue)
@@ -445,54 +522,87 @@ ADSI объект, представляющий группу безопасно�
 
 1. Возвращает всех членов группы Пользователи с учётом транзитивности.
 
-		Get-LocalGroup -Name Пользователи | Get-LocalGroupMember -Recursive;
+		Get-Group -Name Пользователи | Get-LocalGroupMember -Recursive;
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroupMember)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-GroupMember)
 
-#### Remove-LocalGroupMember
+#### Remove-GroupMember
 
 Удаляет учётные записи и/или группы из указанной локальной группы безопасности.
 В качестве удаляемых членов могут быть использованы как локальные
 учётные записи / группы, так и доменные учётные записи / группы (`Get-ADUser`,
 `Get-ADGroup`).
 
+##### ПСЕВДОНИМЫ
+
+Remove-LocalGroupMember
+
 ##### СИНТАКСИС
 
-	Remove-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Remove-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-WhatIf] [-Confirm] <CommonParameters>
 
 ##### ВХОДНЫЕ ДАННЫЕ
 
+- System.DirectoryServices.AccountManagement.Principal
+Учётные записи и группы, которые необходимо удалить из указанной группы.
+- [Microsoft.ActiveDirectory.Management.ADAccount][]
+Учётные записи AD, которые необходимо удалить из указанной группы (полученные
+через `Get-ADUser`, `Get-ADGroup`).
 - System.DirectoryServices.DirectoryEntry
 Учётные записи и группы, которые необходимо удалить из указанной группы.
-- [Microsoft.ActiveDirectory.Management.ADUser][]
-Учётные записи AD, которые необходимо удалить из указанной группы.
-- [Microsoft.ActiveDirectory.Management.ADGroup][]
-Группы AD, которые необходимо удалить из указанной группы.
 
 ##### ПАРАМЕТРЫ
 
-- `[DirectoryEntry] Group`
+- `[GroupPrincipal] Group`
 	Группа безопасности
-	* Тип: System.DirectoryServices.DirectoryEntry
+	* Тип: System.DirectoryServices.AccountManagement.GroupPrincipal
 	* Требуется? да
 	* Позиция? 2
 	* Принимать входные данные конвейера? false
 	* Принимать подстановочные знаки? нет
 
-- `[Object] Identity`
+- `[Principal[]] Member`
 	Объект безопасности для удаления из группы
-	* Тип: [System.Object][]
-	* Псевдонимы: User, Member
+	* Тип: System.DirectoryServices.AccountManagement.Principal[]
+	* Псевдонимы: User
 	* Требуется? да
-	* Позиция? 3
+	* Позиция? named
 	* Принимать входные данные конвейера? true (ByValue)
 	* Принимать подстановочные знаки? нет
 
-- `[SwitchParameter] PassThru`
-	Передавать ли учётную запись далее по конвейеру
-	
+- `[ADAccount[]] ADMember`
+	Объект безопасности AD для удаления из группы
+	* Тип: [Microsoft.ActiveDirectory.Management.ADAccount][][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[DirectoryEntry[]] ADSIMember`
+	Объект безопасности ADSI для добавления в группу
+	* Тип: System.DirectoryServices.DirectoryEntry[]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[Array] OtherMember`
+	Объект безопасности в любом из трёх выше указанных типов для добавления в группу
+	Использовать данный параметр стоит только для обеспечения совместимости при переходе
+	от использования одного набора классов к другому.
+	* Тип: [System.Array][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? false
+	* Принимать подстановочные знаки? нет
 
 - `[SwitchParameter] WhatIf`
 	* Псевдонимы: wi
@@ -511,30 +621,46 @@ ADSI объект, представляющий группу безопасно�
 
 1. Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
 
-		Get-ADUser 'admin-sergey.s.betke' | Remove-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );
+		Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Verbose;
+
+2. Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
+
+		Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -OtherMember ( Get-ADUser 'admin-sergey.s.betke' ) -Verbose;
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-GroupMember)
 
-#### Test-LocalGroupMember
+#### Test-GroupMember
 
-[Get-LocalGroupMember][] проверяет наличие учётных записей в указанной
+[Test-GroupMember][] проверяет наличие учётных записей в указанной
 локальной группе безопасности.
 В том числе - и с учётом транзитивности при указании флага `-Recursive`
 
+##### ПСЕВДОНИМЫ
+
+Test-LocalGroupMember
+
 ##### СИНТАКСИС
 
-	Test-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-Recursive] <CommonParameters>
+	Test-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-Recursive] <CommonParameters>
 
 ##### ВХОДНЫЕ ДАННЫЕ
 
-- System.DirectoryServices.DirectoryEntry
+- System.DirectoryServices.AccountManagement.Principal
 Учётные записи и группы, членство которых необходимо проверить в локальной группе безопасности.
-- [Microsoft.ActiveDirectory.Management.ADUser][]
+- [Microsoft.ActiveDirectory.Management.ADAccount][]
 Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.
-- [Microsoft.ActiveDirectory.Management.ADGroup][]
-Группы AD, членство которых необходимо проверить в локальной группе безопасности.
+- System.DirectoryServices.DirectoryEntry
+Учётные записи и группы ADSI, членство которых необходимо проверить в локальной группе безопасности.
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
@@ -543,21 +669,46 @@ ADSI объект, представляющий группу безопасно�
 
 ##### ПАРАМЕТРЫ
 
-- `[DirectoryEntry] Group`
+- `[GroupPrincipal] Group`
 	Группа безопасности
-	* Тип: System.DirectoryServices.DirectoryEntry
+	* Тип: System.DirectoryServices.AccountManagement.GroupPrincipal
 	* Требуется? да
 	* Позиция? 2
 	* Принимать входные данные конвейера? false
 	* Принимать подстановочные знаки? нет
 
-- `[Object] Identity`
-	Объект безопасности для проверки членства в указанной группе
-	* Тип: [System.Object][]
-	* Псевдонимы: User, Member
+- `[Principal[]] Member`
+	Объект безопасности для проверки членства в группе
+	* Тип: System.DirectoryServices.AccountManagement.Principal[]
 	* Требуется? да
-	* Позиция? 3
+	* Позиция? named
 	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[ADAccount[]] ADMember`
+	Объект безопасности AD для проверки членства в группе
+	* Тип: [Microsoft.ActiveDirectory.Management.ADAccount][][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[DirectoryEntry[]] ADSIMember`
+	Объект безопасности ADSI для проверки членства в группе
+	* Тип: System.DirectoryServices.DirectoryEntry[]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[Array] OtherMember`
+	Объект безопасности в любом из трёх выше указанных типов для проверки членства в группе.
+	Использовать данный параметр стоит только для обеспечения совместимости при переходе
+	от использования одного набора классов к другому.
+	* Тип: [System.Array][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? false
 	* Принимать подстановочные знаки? нет
 
 - `[SwitchParameter] Recursive`
@@ -576,28 +727,36 @@ ADSI объект, представляющий группу безопасно�
 1. Проверяем, является ли пользователь `username` членом локальной группы безопасности
 Пользователи с учётом транзитивности.
 
-		Test-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Member ( Get-ADUser 'admin-sergey.s.betke' ) -Recursive;
+		Get-ADUser 'admin-sergey.s.betke' | Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Recursive;
+
+2. Проверяем, является ли пользователь `username` членом локальной группы безопасности
+Пользователи.
+
+		Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Member (Get-ADUser 'admin-sergey.s.betke');
+
+3. Проверяем, является ли пользователь `username` членом локальной группы безопасности
+Пользователи с учётом транзитивности.
+
+		( [ADSI]'WinNT://csm/admin-sergey.s.betke' ) | Test-GroupMember -Group ( Get-Group -Name Пользователи );
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
-- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember)
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-GroupMember)
 
 
 [about_CommonParameters]: <http://go.microsoft.com/fwlink/?LinkID=113216> "Describes the parameters that can be used with any cmdlet."
-[Add-LocalGroupMember]: <#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
-[ADS_NAME_TYPE_ENUM]: <http://msdn.microsoft.com/en-us/library/windows/desktop/aa772267.aspx> 
-[ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
-[Get-LocalGroup]: <#get-localgroup> "Возвращает локальную группу безопасности."
-[Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
-[Microsoft.ActiveDirectory.Management.ADGroup]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adgroup.aspx> "ADGroup Class (Microsoft.ActiveDirectory.Management)"
-[Microsoft.ActiveDirectory.Management.ADUser]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.aduser.aspx> "ADUser Class (Microsoft.ActiveDirectory.Management)"
-[New-LocalGroup]: <#new-localgroup> "Создаёт локальную группу безопасности."
-[Remove-LocalGroup]: <#remove-localgroup> "Удаляет локальную группу безопасности."
-[Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
-[System.Object]: <http://msdn.microsoft.com/ru-ru/library/system.object.aspx> "Object Class (System)"
+[Add-GroupMember]: <#add-groupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
+[Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
+[Get-GroupMember]: <#get-groupmember> "Возвращает членов локальной группы безопасности."
+[Microsoft.ActiveDirectory.Management.ADAccount]: <http://msdn.microsoft.com/ru-ru/library/microsoft.activedirectory.management.adaccount.aspx> "ADAccount Class (Microsoft.ActiveDirectory.Management)"
+[New-Group]: <#new-group> "Создаёт локальную группу безопасности."
+[Remove-Group]: <#remove-group> "Удаляет локальную группу безопасности."
+[Remove-GroupMember]: <#remove-groupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
+[System.Array]: <http://msdn.microsoft.com/ru-ru/library/system.array.aspx> "Array Class (System)"
+[System.Security.Principal.SecurityIdentifier]: <http://msdn.microsoft.com/ru-ru/library/system.security.principal.securityidentifier.aspx> "SecurityIdentifier Class (System.Security.Principal)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"
-[Test-LocalGroup]: <#test-localgroup> "Проверяет наличие локальной группы безопасности."
-[Test-LocalGroupMember]: <#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
+[Test-Group]: <#test-group> "Проверяет наличие локальной группы безопасности."
+[Test-GroupMember]: <#test-groupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
 
 ---------------------------------------
 

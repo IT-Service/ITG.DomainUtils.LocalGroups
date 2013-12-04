@@ -1,22 +1,22 @@
-Function New-LocalGroup {
+Function New-Group {
 <#
 .Synopsis
 	Создаёт локальную группу безопасности. 
 .Description
-	New-LocalGroup создаёт локальную группу безопасности с указанными аттрибутами.
+	New-Group создаёт локальную группу безопасности с указанными аттрибутами.
 .Outputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.GroupPrincipal
 	Созданная группа безопасности.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group
 .Example
-	New-LocalGroup -Name 'MyUsers' -Description 'Users of my application';
+	New-Group -Name 'MyUsers' -Description 'Users of my application';
 	Создаёт локальную группу безопасности.
 #>
 	[CmdletBinding(
 		SupportsShouldProcess = $true
 		, ConfirmImpact = 'Medium'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group'
 	)]
 
 	param (
@@ -26,16 +26,17 @@ Function New-LocalGroup {
 			, Position = 1
 			, ValueFromPipeline = $true
 			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'GroupProperties'
 		)]
+		[Alias( 'SamAccountName' )]
 		[String]
-		[Alias( 'Identity' )]
 		$Name
 	,
 		# Описание группы безопасности
 		[Parameter(
 			Mandatory = $false
-			, ValueFromPipeline = $false
 			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'GroupProperties'
 		)]
 		[String]
 		$Description
@@ -47,7 +48,9 @@ Function New-LocalGroup {
 
 	begin {
 		try {
-			[System.DirectoryServices.DirectoryEntry] $Computer = [ADSI]"WinNT://$Env:COMPUTERNAME,Computer";
+			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
+				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
+			;
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -56,12 +59,166 @@ Function New-LocalGroup {
 	}
 	process {
 		try {
+			$Params = @{};
+			foreach( $Param in ( Get-Command New-Group ).Parameters.Values ) {
+				if (
+					$Param.ParameterSets.ContainsKey( 'GroupProperties' ) `
+					-and $PSBoundParameters.ContainsKey( $Param.Name )
+				) {
+					$Params.( $Param.Name ) = $PSBoundParameters.( $Param.Name );
+				};
+			};
+			[System.DirectoryServices.AccountManagement.GroupPrincipal] $Group = New-Object -Type System.DirectoryServices.AccountManagement.GroupPrincipal `
+				-ArgumentList ( $ComputerContext ) `
+				-Property $Params `
+			;
+			$Group.IsSecurityGroup = $true;
 			if ( $PSCmdlet.ShouldProcess( "$Name" ) ) {
-				$Group = $Computer.Create( 'Group', $Name );
-				$Group.SetInfo();
-				$Group.Description = $Description;
-				$Group.SetInfo();
-				if ( $PassThru ) { return $Group };
+				$Group.Save();
+			};
+			if ( $PassThru ) { return $Group };
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+	}
+}
+
+New-Alias -Name New-LocalGroup -Value New-Group -Force;
+
+Function Get-Group {
+<#
+.Synopsis
+	Возвращает локальную группу безопасности. 
+.Description
+	Get-Group возвращает локальную группу (или группы) безопасности с указанными параметрами.
+.Inputs
+	System.DirectoryServices.AccountManagement.GroupPrincipal
+	Объект, определяющий параметры поиска.
+.Outputs
+	System.DirectoryServices.AccountManagement.GroupPrincipal
+	Объект, представляющий группу безопасности.
+.Link
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-Group
+.Example
+	Get-Group -Filter '*';
+	Возвращает все локальные группы безопасности.
+.Example
+	Get-Group -Name 'Пользователи';
+	Возвращает группу безопасности Пользователи.
+.Example
+	Get-Group -Filter 'Адм*';
+	Возвращает локальные группы безопасности: Администраторы и другие, имена которых начинаются на 'Адм'.
+#>
+	[CmdletBinding(
+		DefaultParameterSetName = 'Sid'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-Group'
+	)]
+
+	param (
+		# Идентификатор группы безопасности
+		[Parameter(
+			Mandatory = $false
+			, Position = 1
+			, ParameterSetName = 'CustomSearch'
+		)]
+		[String]
+		$Filter = '*'
+	,
+		# Описание искомой группы безопасности
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'CustomSearch'
+		)]
+		[String]
+		$Description
+	,
+		# Идентификатор группы безопасности
+		[Parameter(
+			Mandatory = $false
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Name'
+		)]
+		[String]
+		$Name
+	,
+		# Идентификатор безопасности искомой группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Sid'
+		)]
+		[System.Security.Principal.SecurityIdentifier]
+		$Sid
+	)
+
+	begin {
+		try {
+			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
+				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
+			;
+			$Searcher = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalSearcher;
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+	}
+	process {
+		try {
+			switch ( $PsCmdlet.ParameterSetName ) {
+				'CustomSearch' {
+					$Params = @{};
+					foreach( $Param in ( Get-Command Get-Group ).Parameters.Values.GetEnumerator() ) {
+						if (
+							$Param.ParameterSets.ContainsKey( 'CustomSearch' ) `
+							-and $PSBoundParameters.ContainsKey( $Param.Name )
+						) {
+							switch ( $Param.Name ) {
+								'Filter' {
+									$Params.Name = $Filter;
+									break;
+								}
+								default {
+									$Params.( $Param.Name ) = $PSBoundParameters.( $Param.Name );
+									break;
+								};
+							};
+						};
+					};
+					$Searcher.QueryFilter = New-Object -Type System.DirectoryServices.AccountManagement.GroupPrincipal `
+						-ArgumentList ( $ComputerContext ) `
+						-Property $Params `
+					;
+					$Groups = @( $Searcher.FindAll() );
+					if ( $Groups ) {
+						return $Groups;
+					} else {
+						Write-Error `
+							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
+							-Category ObjectNotFound `
+						;
+					};
+					break;
+				}
+				default {
+					$Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity(
+						$ComputerContext
+						, ( [System.DirectoryServices.AccountManagement.IdentityType]::Parse( [System.DirectoryServices.AccountManagement.IdentityType], $PsCmdlet.ParameterSetName ) )
+						, ( $PSBoundParameters.( $PsCmdlet.ParameterSetName ) )
+					);
+					if ( $Group.SamAccountName ) {
+						return $Group;
+					} else {
+						Write-Error `
+							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
+							-Category ObjectNotFound `
+						;
+					};
+					break;
+				}
 			};
 		} catch {
 			Write-Error `
@@ -71,27 +228,20 @@ Function New-LocalGroup {
 	}
 }
 
-Function Get-LocalGroup {
+New-Alias -Name Get-LocalGroup -Value Get-Group -Force;
+
+Function Test-Group {
 <#
 .Synopsis
-	Возвращает локальную группу безопасности. 
-.Description
-	Get-LocalGroup возвращает локальную группу (или группы) безопасности с указанными параметрами.
+	Проверяет наличие локальной группы безопасности. 
 .Outputs
-	System.DirectoryServices.DirectoryEntry
-	ADSI объект, представляющий группу безопасности.
+	System.Bool
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup
-.Example
-	Get-LocalGroup;
-	Возвращает все локальные группы безопасности.
-.Example
-	Get-LocalGroup -Name 'Пользователи';
-	Возвращает группу безопасности Пользователи.
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group
 #>
 	[CmdletBinding(
-		DefaultParameterSetName = 'Filter'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup'
+		DefaultParameterSetName = 'Sid'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group'
 	)]
 
 	param (
@@ -101,16 +251,113 @@ Function Get-LocalGroup {
 			, Position = 1
 			, ValueFromPipeline = $true
 			, ValueFromPipelineByPropertyName = $true
-			, ParameterSetName = 'Identity'
+			, ParameterSetName = 'Name'
 		)]
 		[String]
-		[Alias( 'Identity' )]
 		$Name
+	,
+		# Идентификатор безопасности искомой группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Sid'
+		)]
+		[System.Security.Principal.SecurityIdentifier]
+		$Sid
 	)
 
 	begin {
 		try {
-			[System.DirectoryServices.DirectoryEntry] $Computer = [ADSI]"WinNT://$Env:COMPUTERNAME,Computer";
+			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
+				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
+			;
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+	}
+	process {
+		try {
+			switch ( $PsCmdlet.ParameterSetName ) {
+				default {
+					$Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity(
+						$ComputerContext
+						, ( [System.DirectoryServices.AccountManagement.IdentityType]::Parse( [System.DirectoryServices.AccountManagement.IdentityType], $PsCmdlet.ParameterSetName ) )
+						, ( $PSBoundParameters.( $PsCmdlet.ParameterSetName ) )
+					);
+					break;
+				}
+			};
+			return [bool] $Group.SamAccountName; # приходится проверять именно SamAccountName, потому как группа возвращается и для несуществующего Sid
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+	}
+}
+
+New-Alias -Name Test-LocalGroup -Value Test-Group -Force;
+
+Function Remove-Group {
+<#
+.Synopsis
+	Удаляет локальную группу безопасности. 
+.Description
+	Remove-Group удаляет локальную группу (или группы) безопасности, переданную по конвейеру.
+.Inputs
+	System.DirectoryServices.AccountManagement.GroupPrincipal
+	Группа безопасности, которую следует удалить.
+.Link
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-Group
+.Example
+	Get-Group -Filter 'test*' | Remove-Group -Verbose;
+	Удаляет группы безопасности, имена которых начинаются с 'test'.
+#>
+	[CmdletBinding(
+		DefaultParameterSetName = 'Sid'
+		, SupportsShouldProcess = $true
+		, ConfirmImpact = 'High'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-Group'
+	)]
+
+	param (
+		# Идентификатор группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, Position = 1
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Name'
+		)]
+		[String]
+		$Name
+	,
+		# Идентификатор безопасности искомой группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Sid'
+		)]
+		[System.Security.Principal.SecurityIdentifier]
+		$Sid
+	,
+		# Группа безопасности к удалению
+		# Идентификатор группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'Identity'
+		)]
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
+		$Identity
+	)
+
+	begin {
+		try {
+			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
+				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
+			;
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -121,20 +368,21 @@ Function Get-LocalGroup {
 		try {
 			switch ( $PsCmdlet.ParameterSetName ) {
 				'Identity' {
-					[System.DirectoryServices.DirectoryEntry] $Group = $Computer.Children.Find( $Name, 'Group' );
-					if ( $Group.Path ) {
-						return $Group;
-					} else {
-						Write-Error `
-							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
-							-Category ObjectNotFound `
-						;
+					if ( $PSCmdlet.ShouldProcess( "$( $Identity.Name )" ) ) {
+						$Identity.Delete();
 					};
+					break;
 				}
-				'Filter' {
-					$Computer.Children `
-					| ? { $_.SchemaClassName -eq 'Group' } `
+				default {
+					$Params = @{};
+					$Params.Add( $PsCmdlet.ParameterSetName, $PSBoundParameters.( $PsCmdlet.ParameterSetName ) );
+					Get-Group `
+						@Params `
+						-Verbose:$VerbosePreference `
+					| Remove-Group `
+						-Verbose:$VerbosePreference `
 					;
+					break;
 				}
 			};
 		} catch {
@@ -145,127 +393,29 @@ Function Get-LocalGroup {
 	}
 }
 
-Function Test-LocalGroup {
-<#
-.Synopsis
-	Проверяет наличие локальной группы безопасности. 
-.Outputs
-	System.Bool
-.Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup
-#>
-	[CmdletBinding(
-		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup'
-	)]
+New-Alias -Name Remove-LocalGroup -Value Remove-Group -Force;
 
-	param (
-		# Идентификатор группы безопасности
-		[Parameter(
-			Mandatory = $true
-			, Position = 1
-			, ValueFromPipeline = $true
-			, ValueFromPipelineByPropertyName = $true
-		)]
-		[String]
-		[Alias( 'Identity' )]
-		$Name
-	)
-
-	process {
-		try {
-			return [Bool] ( Get-LocalGroup -Name $Name -ErrorAction SilentlyContinue );
-		} catch {
-			Write-Error `
-				-ErrorRecord $_ `
-			;
-		};
-	}
-}
-
-Function Remove-LocalGroup {
-<#
-.Synopsis
-	Удаляет локальную группу безопасности. 
-.Description
-	Remove-LocalGroup удаляет локальную группу (или группы) безопасности, переданные по конвейеру.
-.Inputs
-	System.DirectoryServices.DirectoryEntry
-	Группа безопасности.
-.Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup
-.Example
-	Get-LocalGroup -Name 'Пользователи' | Remove-LocalGroup;
-	Удаляет группу безопасности 'Пользователи'.
-#>
-	[CmdletBinding(
-		SupportsShouldProcess = $true
-		, ConfirmImpact = 'High'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup'
-	)]
-
-	param (
-		# Группа безопасности к удалению
-		# Идентификатор группы безопасности
-		[Parameter(
-			Mandatory = $true
-			, Position = 1
-			, ValueFromPipelineByPropertyName = $true
-			, ParameterSetName = 'Identity'
-		)]
-		[String]
-		[Alias( 'Identity' )]
-		$Name
-	)
-
-	begin {
-		try {
-			[System.DirectoryServices.DirectoryEntry] $Computer = [ADSI]"WinNT://$Env:COMPUTERNAME,Computer";
-		} catch {
-			Write-Error `
-				-ErrorRecord $_ `
-			;
-		};
-	}
-	process {
-		try {
-			if ( $PSCmdlet.ShouldProcess( "$Name" ) ) {
-				$Computer.Delete( 'Group', $Name );
-			};
-		} catch {
-			Write-Error `
-				-ErrorRecord $_ `
-			;
-		};
-	}
-}
-
-Function Get-LocalGroupMember {
+Function Get-GroupMember {
 <#
 .Synopsis
 	Возвращает членов локальной группы безопасности. 
 .Description
-	Get-LocalGroupMember возвращает членов указанной локальной группы безопасности.
+	Get-GroupMember возвращает членов указанной локальной группы безопасности.
 	В том числе - и с учётом транзитивности при указании флага `-Recursive`
 .Inputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.GroupPrincipal
 	Группа безопасности.
 .Outputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.Principal
 	Члены указанной группы безопасности.
-.Outputs
-	PSObject
-	Для групп типа `NT AUTHORITY/ИНТЕРАКТИВНЫЕ` возвращён будет объект,
-	содержащий свойства `Path`, `Name`, `objectSid`, `groupType`.
-	`SchemaClassName` будет установлен в `Group`, `AuthenticationType` в `Secure`.
-	Дополнительно будет установлен аттрибут `NtAuthority` в `$true`.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-GroupMember
 .Example
-	Get-LocalGroup -Name Пользователи | Get-LocalGroupMember -Recursive;
+	Get-Group -Name Пользователи | Get-LocalGroupMember -Recursive;
 	Возвращает всех членов группы Пользователи с учётом транзитивности.
 #>
 	[CmdletBinding(
-		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroupMember'
+		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-GroupMember'
 	)]
 
 	param (
@@ -275,9 +425,8 @@ Function Get-LocalGroupMember {
 			, Position = 1
 			, ValueFromPipeline = $true
 		)]
-		[System.DirectoryServices.DirectoryEntry]
-		[Alias( 'Group' )]
-		$Identity
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
+		$Group
 	,
 		# Запросить членов группы с учётом транзитивности
 		[Switch]
@@ -286,42 +435,20 @@ Function Get-LocalGroupMember {
 
 	process {
 		try {
-			$Members = @(
-				$Identity.PSBase.Invoke( 'Members' ) `
-				| % { 
-					$Member = [ADSI]( $_.GetType().InvokeMember( 'ADsPath', 'GetProperty', $null, $_, $null ) );
-					if ( $Member.Path ) { # объект не типа NT AUTHORITY/ИНТЕРАКТИВНЫЕ
-						$Member;
-					} else {
-						New-Object PSObject -Property @{
-							Path = ( $_.GetType().InvokeMember( 'ADsPath', 'GetProperty', $null, $_, $null ) );
-							Name =  ( $_.GetType().InvokeMember( 'Name', 'GetProperty', $null, $_, $null ) );
-							objectSid =  ( $_.GetType().InvokeMember( 'objectSid', 'GetProperty', $null, $_, $null ) );
-							groupType = ( $_.GetType().InvokeMember( 'groupType', 'GetProperty', $null, $_, $null ) );
-							SchemaClassName = 'Group';
-							AuthenticationType = [System.DirectoryServices.AuthenticationTypes]::Secure;
-							NtAuthority = $true;
-						};
-					};
-				} `
-			);
+			$Members = @( $Group.Members );
 			if ( -not $Recursive ) {
-				return (
-					$Members `
-					| Sort-Object `
-						-Property 'Path' `
-						-Unique `
-				);
+				return $Members;
 			} else {
-				$Members `
-				| % {
-					$_;
-					if ( ( $_.SchemaClassName -eq 'Group' ) -and -not ( $_.NtAuthority -eq $true ) ) {
-						$_ | Get-LocalGroupMember -Recursive;
-					};
-				} `
+				(
+					$Members `
+					| ? { $_ -is [System.DirectoryServices.AccountManagement.GroupPrincipal] } `
+					| Get-GroupMember `
+						-Recursive `
+						-Verbose:$VerbosePreference `
+				) `
+				+ $Members `
 				| Sort-Object `
-					-Property 'Path' `
+					-Property Sid `
 					-Unique `
 				;
 			};
@@ -333,35 +460,46 @@ Function Get-LocalGroupMember {
 	}
 }
 
-Function Test-LocalGroupMember {
+New-Alias -Name Get-LocalGroupMember -Value Get-GroupMember -Force;
+
+Function Test-GroupMember {
 <#
 .Synopsis
 	Проверяет наличие учётных записей в указанной локальной группе безопасности. 
 .Description
-	Get-LocalGroupMember проверяет наличие учётных записей в указанной
+	Test-GroupMember проверяет наличие учётных записей в указанной
 	локальной группе безопасности.
 	В том числе - и с учётом транзитивности при указании флага `-Recursive`
 .Inputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.Principal
 	Учётные записи и группы, членство которых необходимо проверить в локальной группе безопасности.
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADUser
+	Microsoft.ActiveDirectory.Management.ADAccount
 	Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADGroup
-	Группы AD, членство которых необходимо проверить в локальной группе безопасности.
+	System.DirectoryServices.DirectoryEntry
+	Учётные записи и группы ADSI, членство которых необходимо проверить в локальной группе безопасности.
 .Outputs
 	Bool
 	Наличие ( `$true` ) или отсутствие ( `$false` ) указанных объектов в указанной группе
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-GroupMember
 .Example
-	Test-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Member ( Get-ADUser 'admin-sergey.s.betke' ) -Recursive;
+	Get-ADUser 'admin-sergey.s.betke' | Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Recursive;
+	Проверяем, является ли пользователь `username` членом локальной группы безопасности
+	Пользователи с учётом транзитивности.
+.Example
+	Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Member (Get-ADUser 'admin-sergey.s.betke');
+	Проверяем, является ли пользователь `username` членом локальной группы безопасности
+	Пользователи.
+.Example
+	( [ADSI]'WinNT://csm/admin-sergey.s.betke' ) | Test-GroupMember -Group ( Get-Group -Name Пользователи );
 	Проверяем, является ли пользователь `username` членом локальной группы безопасности
 	Пользователи с учётом транзитивности.
 #>
 	[CmdletBinding(
-		HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember'
+		DefaultParameterSetName = 'Sid'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-GroupMember'
 	)]
 
 	param (
@@ -369,20 +507,46 @@ Function Test-LocalGroupMember {
 		[Parameter(
 			Mandatory = $true
 			, Position = 1
-			, ValueFromPipeline = $false
 		)]
-		[System.DirectoryServices.DirectoryEntry]
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
 		$Group
 	,
-		# Объект безопасности для проверки членства в указанной группе
+		# Объект безопасности для проверки членства в группе
 		[Parameter(
 			Mandatory = $true
-			, Position = 2
 			, ValueFromPipeline = $true
+			, ParameterSetName = 'Member'
 		)]
-		[Alias( 'Member' )]
-		[Alias( 'User' )]
-		$Identity
+		[System.DirectoryServices.AccountManagement.Principal[]]
+		$Member
+	,
+		# Объект безопасности AD для проверки членства в группе
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADMember'
+		)]
+		[Microsoft.ActiveDirectory.Management.ADAccount[]]
+		$ADMember
+	,
+		# Объект безопасности ADSI для проверки членства в группе
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADSIMember'
+		)]
+		[System.DirectoryServices.DirectoryEntry[]]
+		$ADSIMember
+	,
+		# Объект безопасности в любом из трёх выше указанных типов для проверки членства в группе.
+		# Использовать данный параметр стоит только для обеспечения совместимости при переходе
+		# от использования одного набора классов к другому.
+		[Parameter(
+			Mandatory = $true
+			, ParameterSetName = 'UnknownTypeMember'
+		)]
+		[Array]
+		$OtherMember
 	,
 		# Запросить членов группы с учётом транзитивности
 		[Switch]
@@ -390,19 +554,46 @@ Function Test-LocalGroupMember {
 	)
 
 	begin {
-		$Members = @(
-			Get-LocalGroupMember `
-				-Identity $Group `
+		$MembersSids = @(
+			Get-GroupMember `
+				-Group $Group `
 				-Recursive:$Recursive `
-			| Select-Object -ExpandProperty Path `
+			| Select-Object -ExpandProperty Sid `
 		);
 	}
 	process {
 		try {
-			$Identity `
-			| ConvertTo-ADSIPath `
-			| % {
-				$Members -contains $_;
+   			switch ( $PsCmdlet.ParameterSetName ) {
+				'UnknownTypeMember' {
+					$OtherMember `
+					| Test-GroupMember `
+						-Group $Group `
+						-Recursive:$Recursive `
+						-Verbose:$VerbosePreference `
+					;
+					break;
+				}
+				'Member' {
+					$Member `
+					| % {
+						$MembersSids -contains ( $_.Sid );
+					};
+					break;
+				}
+				'ADMember' {
+					$ADMember `
+					| % {
+						$MembersSids -contains ( $_.Sid );
+					};
+					break;
+				}
+				'ADSIMember' {
+					$ADSIMember `
+					| % {
+						$MembersSids -contains ( New-Object -Type System.Security.Principal.SecurityIdentifier -ArgumentList ( [Byte[]] $_.objectSid[0] ), 0 );
+					};
+					break;
+				}
 			};
 		} catch {
 			Write-Error `
@@ -412,7 +603,9 @@ Function Test-LocalGroupMember {
 	}
 }
 
-Function Add-LocalGroupMember {
+New-Alias -Name Test-LocalGroupMember -Value Test-GroupMember -Force;
+
+Function Add-GroupMember {
 <#
 .Synopsis
 	Добавляет учётные записи и/или группы в указанную локальную группу безопасности. 
@@ -422,25 +615,29 @@ Function Add-LocalGroupMember {
 	учётные записи / группы, так и доменные учётные записи / группы (`Get-ADUser`,
 	`Get-ADGroup`).
 .Inputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.Principal
 	Учётные записи и группы, которые необходимо включить в локальную группу безопасности.
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADUser
+	Microsoft.ActiveDirectory.Management.ADAccount
 	Учётные записи AD, которые необходимо включить в локальную группу безопасности.
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADGroup
-	Группы AD, которые необходимо включить в локальную группу безопасности.
+	System.DirectoryServices.DirectoryEntry
+	Учётные записи и группы ADSI, которые необходимо включить в локальную группу безопасности.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-GroupMember
 .Example
-	Get-ADUser 'admin-sergey.s.betke' | Add-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );
+	Get-ADUser 'admin-sergey.s.betke' | Add-GroupMember -Group ( Get-Group -Name Пользователи );
 	Добавляем указанного пользователя домена в локальную группы безопасности
+	"Пользователи".
+.Example
+	Get-ADGroup 'Администраторы' | Add-GroupMember -Group ( Get-Group -Name Пользователи );
+	Добавляем указанного локального пользователя в локальную группы безопасности
 	"Пользователи".
 #>
 	[CmdletBinding(
 		SupportsShouldProcess = $true
-		, ConfirmImpact = 'Medium'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember'
+		, ConfirmImpact = 'Low'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-GroupMember'
 	)]
 
 	param (
@@ -448,45 +645,115 @@ Function Add-LocalGroupMember {
 		[Parameter(
 			Mandatory = $true
 			, Position = 1
-			, ValueFromPipeline = $false
 		)]
-		[System.DirectoryServices.DirectoryEntry]
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
 		$Group
 	,
 		# Объект безопасности для добавления в группу
 		[Parameter(
 			Mandatory = $true
-			, Position = 2
 			, ValueFromPipeline = $true
+			, ParameterSetName = 'Member'
 		)]
-		[Alias( 'Member' )]
-		[Alias( 'User' )]
-		$Identity
+		[System.DirectoryServices.AccountManagement.Principal[]]
+		$Member
+	,
+		# Объект безопасности AD для добавления в группу
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADMember'
+		)]
+		[Microsoft.ActiveDirectory.Management.ADAccount[]]
+		$ADMember
+	,
+		# Объект безопасности ADSI для добавления в группу
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADSIMember'
+		)]
+		[System.DirectoryServices.DirectoryEntry[]]
+		$ADSIMember
+	,
+		# Объект безопасности в любом из трёх выше указанных типов для добавления в группу
+		# Использовать данный параметр стоит только для обеспечения совместимости при переходе
+		# от использования одного набора классов к другому.
+		[Parameter(
+			Mandatory = $true
+			, ParameterSetName = 'UnknownTypeMember'
+		)]
+		[Array]
+		$OtherMember
 	,
 		# Передавать ли учётную запись далее по конвейеру
 		[Switch]
 		$PassThru
 	)
 
-	process {
+	begin {
 		try {
-			$Identity `
-			| ConvertTo-ADSIPath `
-			| % {
-				if ( $PSCmdlet.ShouldProcess( "$_ => $( $Group.Path )" ) ) {
-					$Group.PSBase.Invoke( 'Add', $_ );
-				};
-			};
-			if ( $PassThru ) { return $Identity; };
+			[System.DirectoryServices.DirectoryEntry] $ADSIGroup = $Group.GetUnderlyingObject();
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
 			;
 		};
 	}
+	process {
+		try {
+   			switch ( $PsCmdlet.ParameterSetName ) {
+				'UnknownTypeMember' {
+					$OtherMember `
+					| Add-GroupMember `
+						-Group $Group `
+						-Verbose:$VerbosePreference `
+					;
+					break;
+				}
+				'Member' {
+					$Member `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_.Name ) => $( $Group.Name )" ) ) {
+							$Group.Members.Add( $_ );
+							$Group.Save();
+						};
+					};
+					break;
+				}
+				'ADMember' {
+					$ADMember `
+					| ConvertTo-ADSIPath `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_ ) => $( $Group.Name )" ) ) {
+							$ADSIGroup.PSBase.Invoke( 'Add', $_ );
+						};
+					};
+					break;
+				}
+				'ADSIMember' {
+					$ADSIMember `
+					| ConvertTo-ADSIPath `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_ ) => $( $Group.Name )" ) ) {
+							$ADSIGroup.PSBase.Invoke( 'Add', $_ );
+						};
+					};
+					break;
+				}
+			};
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+		if ( $PassThru ) { return $input; };
+	}
 }
 
-Function Remove-LocalGroupMember {
+New-Alias -Name Add-LocalGroupMember -Value Add-GroupMember -Force;
+
+Function Remove-GroupMember {
 <#
 .Synopsis
 	Удаляет учётные записи и/или группы из указанной локальной группы безопасности. 
@@ -496,24 +763,28 @@ Function Remove-LocalGroupMember {
 	учётные записи / группы, так и доменные учётные записи / группы (`Get-ADUser`,
 	`Get-ADGroup`).
 .Inputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.Principal
 	Учётные записи и группы, которые необходимо удалить из указанной группы.
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADUser
-	Учётные записи AD, которые необходимо удалить из указанной группы.
+	Microsoft.ActiveDirectory.Management.ADAccount
+	Учётные записи AD, которые необходимо удалить из указанной группы (полученные
+	через `Get-ADUser`, `Get-ADGroup`).
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADGroup
-	Группы AD, которые необходимо удалить из указанной группы.
+	System.DirectoryServices.DirectoryEntry
+	Учётные записи и группы, которые необходимо удалить из указанной группы.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-GroupMember
 .Example
-	Get-ADUser 'admin-sergey.s.betke' | Remove-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );
+	Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Verbose;
+	Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
+.Example
+	Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -OtherMember ( Get-ADUser 'admin-sergey.s.betke' ) -Verbose;
 	Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
 #>
 	[CmdletBinding(
 		SupportsShouldProcess = $true
-		, ConfirmImpact = 'High'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember'
+		, ConfirmImpact = 'Medium'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-GroupMember'
 	)]
 
 	param (
@@ -521,36 +792,99 @@ Function Remove-LocalGroupMember {
 		[Parameter(
 			Mandatory = $true
 			, Position = 1
-			, ValueFromPipeline = $false
 		)]
-		[System.DirectoryServices.DirectoryEntry]
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
 		$Group
 	,
 		# Объект безопасности для удаления из группы
 		[Parameter(
 			Mandatory = $true
-			, Position = 2
 			, ValueFromPipeline = $true
+			, ParameterSetName = 'Member'
 		)]
-		[Alias( 'Member' )]
+		[System.DirectoryServices.AccountManagement.Principal[]]
 		[Alias( 'User' )]
-		$Identity
+		$Member
 	,
-		# Передавать ли учётную запись далее по конвейеру
-		[Switch]
-		$PassThru
+		# Объект безопасности AD для удаления из группы
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADMember'
+		)]
+		[Microsoft.ActiveDirectory.Management.ADAccount[]]
+		$ADMember
+	,
+		# Объект безопасности ADSI для добавления в группу
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADSIMember'
+		)]
+		[System.DirectoryServices.DirectoryEntry[]]
+		$ADSIMember
+	,
+		# Объект безопасности в любом из трёх выше указанных типов для добавления в группу
+		# Использовать данный параметр стоит только для обеспечения совместимости при переходе
+		# от использования одного набора классов к другому.
+		[Parameter(
+			Mandatory = $true
+			, ParameterSetName = 'UnknownTypeMember'
+		)]
+		[Array]
+		$OtherMember
 	)
 
+	begin {
+		try {
+			[System.DirectoryServices.DirectoryEntry] $ADSIGroup = $Group.GetUnderlyingObject();
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+	}
 	process {
 		try {
-			$Identity `
-			| ConvertTo-ADSIPath `
-			| % {
-				if ( $PSCmdlet.ShouldProcess( "$_ => $( $Group.Path )" ) ) {
-					$Group.PSBase.Invoke( 'Remove', $_ );
-				};
+   			switch ( $PsCmdlet.ParameterSetName ) {
+				'UnknownTypeMember' {
+					$OtherMember `
+					| Remove-GroupMember `
+						-Group $Group `
+						-Verbose:$VerbosePreference `
+					;
+					break;
+				}
+				'Member' {
+					$Member `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_.Name ) => $( $Group.Name )" ) ) {
+							$Group.Members.Remove( $_ );
+							$Group.Save();
+						};
+					};
+					break;
+				}
+				'ADMember' {
+					$ADMember `
+					| ConvertTo-ADSIPath `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_ ) => $( $Group.Name )" ) ) {
+							$ADSIGroup.PSBase.Invoke( 'Remove', $_ );
+						};
+					};
+					break;
+				}
+				'ADSIMember' {
+					$ADSIMember `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_.Name ) => $( $Group.Name )" ) ) {
+							$ADSIGroup.PSBase.Invoke( 'Remove', $_.Path );
+						};
+					};
+					break;
+				}
 			};
-			if ( $PassThru ) { return $Identity; };
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -558,3 +892,5 @@ Function Remove-LocalGroupMember {
 		};
 	}
 }
+
+New-Alias -Name Remove-LocalGroupMember -Value Remove-GroupMember -Force;

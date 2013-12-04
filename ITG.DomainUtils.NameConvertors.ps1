@@ -44,6 +44,15 @@ Function ConvertTo-ADSIPath {
 		)]
 		[String]
 		$DistinguishedName
+	,
+		# SID
+		[Parameter(
+			ParameterSetName = 'SID'
+			, Mandatory = $true
+			, ValueFromPipelineByPropertyName = $true
+		)]
+		[String]
+		$SID
 	)
 
 	begin {
@@ -67,11 +76,19 @@ Function ConvertTo-ADSIPath {
 							3, "$( $Matches['domain'] )\$( $Matches['name'] )" ## ADS_NAME_TYPE_NT4
 						) );
 					};
+					break;
 				}
 				'DistinguishedName' {
 					$null = $NameTranslator.GetType().InvokeMember( 'Set', [System.Reflection.BindingFlags]::InvokeMethod, $null, $NameTranslator, (
 						1, $DistinguishedName ## ADS_NAME_TYPE_1779
 					) );
+					break;
+				}
+				'SID' {
+					$null = $NameTranslator.GetType().InvokeMember( 'Set', [System.Reflection.BindingFlags]::InvokeMethod, $null, $NameTranslator, (
+						12, $SID ## ADS_NAME_TYPE_SID_OR_SID_HISTORY_NAME
+					) );
+					break;
 				}
 				default {
 					$null = $NameTranslator.GetType().InvokeMember( 'Set', [System.Reflection.BindingFlags]::InvokeMethod, $null, $NameTranslator, (

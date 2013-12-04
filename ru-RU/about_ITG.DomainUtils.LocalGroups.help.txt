@@ -10,85 +10,102 @@
 Для модульных тестов использую проект [pester](https://github.com/pester/pester).
 
 
-Версия модуля: **1.0.0**
+Версия модуля: **2.0.0**
 
 ПОДДЕРЖИВАЮТСЯ КОМАНДЛЕТЫ
 -------------------------
 
-### ADSIPath
+### Group
 
-#### КРАТКОЕ ОПИСАНИЕ [ConvertTo-ADSIPath][]
-
-Конвертирует идентификатор переданного объекта безопасности в ADSI путь.
-
-	ConvertTo-ADSIPath -Path <String> <CommonParameters>
-
-	ConvertTo-ADSIPath -DistinguishedName <String> <CommonParameters>
-
-### LocalGroup
-
-#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroup][]
+#### КРАТКОЕ ОПИСАНИЕ [Get-Group][]
 
 Возвращает локальную группу безопасности.
 
-	Get-LocalGroup <CommonParameters>
+	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-	Get-LocalGroup [-Name] <String> <CommonParameters>
+	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [New-LocalGroup][]
+	Get-Group [-Name <String>] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [New-Group][]
 
 Создаёт локальную группу безопасности.
 
-	New-LocalGroup [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	New-Group [-Name] <String> [-Description <String>] [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroup][]
+#### КРАТКОЕ ОПИСАНИЕ [Remove-Group][]
 
 Удаляет локальную группу безопасности.
 
-	Remove-LocalGroup [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+	Remove-Group -Sid <SecurityIdentifier> [-WhatIf] [-Confirm] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Test-LocalGroup][]
+	Remove-Group [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-Group -Identity <GroupPrincipal> [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Test-Group][]
 
 Проверяет наличие локальной группы безопасности.
 
-	Test-LocalGroup [-Name] <String> <CommonParameters>
+	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
 
-### LocalGroupMember
+	Test-Group [-Name] <String> <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Add-LocalGroupMember][]
+### GroupMember
+
+#### КРАТКОЕ ОПИСАНИЕ [Add-GroupMember][]
 
 Добавляет учётные записи и/или группы в указанную локальную группу безопасности.
 
-	Add-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Add-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Get-LocalGroupMember][]
+	Add-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Get-GroupMember][]
 
 Возвращает членов локальной группы безопасности.
 
-	Get-LocalGroupMember [-Identity] <DirectoryEntry> [-Recursive] <CommonParameters>
+	Get-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Remove-LocalGroupMember][]
+#### КРАТКОЕ ОПИСАНИЕ [Remove-GroupMember][]
 
 Удаляет учётные записи и/или группы из указанной локальной группы безопасности.
 
-	Remove-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+	Remove-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-WhatIf] [-Confirm] <CommonParameters>
 
-#### КРАТКОЕ ОПИСАНИЕ [Test-LocalGroupMember][]
+	Remove-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-WhatIf] [-Confirm] <CommonParameters>
+
+#### КРАТКОЕ ОПИСАНИЕ [Test-GroupMember][]
 
 Проверяет наличие учётных записей в указанной локальной группе безопасности.
 
-	Test-LocalGroupMember [-Group] <DirectoryEntry> [-Identity] <Object> [-Recursive] <CommonParameters>
+	Test-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-Recursive] <CommonParameters>
 
 
-[Add-LocalGroupMember]: <#add-localgroupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
-[ConvertTo-ADSIPath]: <#convertto-adsipath> "Конвертирует идентификатор переданного объекта безопасности в ADSI путь."
-[Get-LocalGroup]: <#get-localgroup> "Возвращает локальную группу безопасности."
-[Get-LocalGroupMember]: <#get-localgroupmember> "Возвращает членов локальной группы безопасности."
-[New-LocalGroup]: <#new-localgroup> "Создаёт локальную группу безопасности."
-[Remove-LocalGroup]: <#remove-localgroup> "Удаляет локальную группу безопасности."
-[Remove-LocalGroupMember]: <#remove-localgroupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
-[Test-LocalGroup]: <#test-localgroup> "Проверяет наличие локальной группы безопасности."
-[Test-LocalGroupMember]: <#test-localgroupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
+[Add-GroupMember]: <#add-groupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."
+[Get-Group]: <#get-group> "Возвращает локальную группу безопасности."
+[Get-GroupMember]: <#get-groupmember> "Возвращает членов локальной группы безопасности."
+[New-Group]: <#new-group> "Создаёт локальную группу безопасности."
+[Remove-Group]: <#remove-group> "Удаляет локальную группу безопасности."
+[Remove-GroupMember]: <#remove-groupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
+[Test-Group]: <#test-group> "Проверяет наличие локальной группы безопасности."
+[Test-GroupMember]: <#test-groupmember> "Проверяет наличие учётных записей в указанной локальной группе безопасности."
 
 ---------------------------------------
 

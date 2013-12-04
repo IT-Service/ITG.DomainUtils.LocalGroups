@@ -3,30 +3,90 @@
 <helpItems xmlns="http://msh" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp" schema="maml">
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Add-LocalGroupMember</name>
+			<name>Add-GroupMember</name>
 			<verb>Add</verb>
-			<noun>LocalGroupMember</noun>
+			<noun>GroupMember</noun>
 			<maml:description>
 				<maml:para>Добавляет учётные записи и/или группы в указанную локальную группу безопасности.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.0.0</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
 			<maml:para>Добавляет учётные записи и/или группы в указанную локальную группу безопасности. В качестве добавляемых учётных записей и групп могут быть использованы как локальные учётные записи / группы, так и доменные учётные записи / группы (`Get-ADUser`, `Get-ADGroup`).</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Add-LocalGroupMember</maml:name>
+				<maml:name>Add-GroupMember</maml:name>
 				<parameter required="true" position="2" pipelineInput="false" globbing="false">
 					<maml:name>Group</maml:name>
-					<parameterValue required="true">DirectoryEntry</parameterValue>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
 				</parameter>
-				<parameter required="true" position="3" pipelineInput="true (ByValue)" globbing="false">
-					<maml:name>Identity</maml:name>
-					<parameterValue required="true">Object</parameterValue>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>Member</maml:name>
+					<parameterValue required="true">Principal[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Add-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ADMember</maml:name>
+					<parameterValue required="true">ADAccount[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Add-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ADSIMember</maml:name>
+					<parameterValue required="true">DirectoryEntry[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Add-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="false" globbing="false">
+					<maml:name>OtherMember</maml:name>
+					<parameterValue required="true">Array</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>PassThru</maml:name>
@@ -45,14 +105,35 @@
 				<maml:description>
 					<maml:para>Группа безопасности</maml:para>
 				</maml:description>
-				<parameterValue required="True">DirectoryEntry</parameterValue>
+				<parameterValue required="True">GroupPrincipal</parameterValue>
 			</parameter>
-			<parameter required="true" position="3" pipelineInput="true (ByValue)" globbing="false">
-				<maml:name>Identity</maml:name>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>Member</maml:name>
 				<maml:description>
 					<maml:para>Объект безопасности для добавления в группу</maml:para>
 				</maml:description>
-				<parameterValue required="True">Object</parameterValue>
+				<parameterValue required="True">Principal[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ADMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности AD для добавления в группу</maml:para>
+				</maml:description>
+				<parameterValue required="True">ADAccount[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ADSIMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности ADSI для добавления в группу</maml:para>
+				</maml:description>
+				<parameterValue required="True">DirectoryEntry[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="false" globbing="false">
+				<maml:name>OtherMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности в любом из трёх выше указанных типов для добавления в группу Использовать данный параметр стоит только для обеспечения совместимости при переходе от использования одного набора классов к другому.</maml:para>
+				</maml:description>
+				<parameterValue required="True">Array</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>PassThru</maml:name>
@@ -74,7 +155,7 @@
 		<inputTypes>
 			<inputType>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.Principal</maml:name>
 					<maml:description>
 						<maml:para>Учётные записи и группы, которые необходимо включить в локальную группу безопасности.</maml:para>
 					</maml:description>
@@ -85,7 +166,7 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>Microsoft.ActiveDirectory.Management.ADUser</maml:name>
+					<maml:name>Microsoft.ActiveDirectory.Management.ADAccount</maml:name>
 					<maml:description>
 						<maml:para>Учётные записи AD, которые необходимо включить в локальную группу безопасности.</maml:para>
 					</maml:description>
@@ -96,13 +177,13 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>Microsoft.ActiveDirectory.Management.ADGroup</maml:name>
+					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
 					<maml:description>
-						<maml:para>Группы AD, которые необходимо включить в локальную группу безопасности.</maml:para>
+						<maml:para>Учётные записи и группы ADSI, которые необходимо включить в локальную группу безопасности.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
-					<maml:para>Группы AD, которые необходимо включить в локальную группу безопасности.</maml:para>
+					<maml:para>Учётные записи и группы ADSI, которые необходимо включить в локальную группу безопасности.</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>
@@ -112,172 +193,125 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-ADUser 'admin-sergey.s.betke' | Add-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );</dev:code>
+				<dev:code>Get-ADUser 'admin-sergey.s.betke' | Add-GroupMember -Group ( Get-Group -Name Пользователи );</dev:code>
 				<maml:remarks>
 					<maml:para>Добавляем указанного пользователя домена в локальную группы безопасности "Пользователи".</maml:para>
 				</maml:remarks>
 			</example>
-		</examples>
-		<maml:relatedLinks>
-			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember</maml:uri>
-			</maml:navigationLink>
-		</maml:relatedLinks>
-	</command>
-	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
-		<details>
-			<name>ConvertTo-ADSIPath</name>
-			<verb>ConvertTo</verb>
-			<noun>ADSIPath</noun>
-			<maml:description>
-				<maml:para>Конвертирует идентификатор переданного объекта безопасности в ADSI путь.</maml:para>
-			</maml:description>
-			<maml:copyright>
-				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
-			</maml:copyright>
-			<dev:version>1.0.0</dev:version>
-		</details>
-		<maml:description>
-			<maml:para>Конвертирует идентификатор переданного объекта безопасности в ADSI путь.</maml:para>
-		</maml:description>
-		<syntax>
-			<syntaxItem>
-				<maml:name>ConvertTo-ADSIPath</maml:name>
-				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-					<maml:name>Path</maml:name>
-					<parameterValue required="true">String</parameterValue>
-				</parameter>
-			</syntaxItem>
-			<syntaxItem>
-				<maml:name>ConvertTo-ADSIPath</maml:name>
-				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-					<maml:name>DistinguishedName</maml:name>
-					<parameterValue required="true">String</parameterValue>
-				</parameter>
-			</syntaxItem>
-		</syntax>
-		<parameters>
-			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-				<maml:name>Path</maml:name>
-				<maml:description>
-					<maml:para>ADSI путь, преобразование не требуется</maml:para>
-				</maml:description>
-				<parameterValue required="True">String</parameterValue>
-			</parameter>
-			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
-				<maml:name>DistinguishedName</maml:name>
-				<maml:description>
-					<maml:para>DN для преобразования в ADSI Path</maml:para>
-				</maml:description>
-				<parameterValue required="True">String</parameterValue>
-			</parameter>
-		</parameters>
-		<inputTypes>
-			<inputType>
-				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
-					<maml:description>
-						<maml:para>Учётные записи и группы, идентификатор которых следует проверить / преобразовать.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Учётные записи и группы, идентификатор которых следует проверить / преобразовать.</maml:para>
-				</maml:description>
-			</inputType>
-			<inputType>
-				<dev:type>
-					<maml:name>Microsoft.ActiveDirectory.Management.ADUser</maml:name>
-					<maml:description>
-						<maml:para>Учётные записи и группы AD, DN которых следует преобразовать.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Учётные записи и группы AD, DN которых следует преобразовать.</maml:para>
-				</maml:description>
-			</inputType>
-		</inputTypes>
-		<returnValues>
-			<returnValue>
-				<dev:type>
-					<maml:name>System.String</maml:name>
-					<maml:description>
-						<maml:para>ADSI путь к указанным объектам безопасности.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>ADSI путь к указанным объектам безопасности.</maml:para>
-				</maml:description>
-			</returnValue>
-		</returnValues>
-		<examples>
 			<example>
-				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:title>-------------------------- ПРИМЕР 2 --------------------------</maml:title>
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-ADUser 'admin-sergey.s.betke' | ConvertTo-ADSIPath;</dev:code>
+				<dev:code>Get-ADGroup 'Администраторы' | Add-GroupMember -Group ( Get-Group -Name Пользователи );</dev:code>
 				<maml:remarks>
-					<maml:para>В результате получим `WinNT://CSM/admin-sergey.s.betke`.</maml:para>
+					<maml:para>Добавляем указанного локального пользователя в локальную группы безопасности "Пользователи".</maml:para>
 				</maml:remarks>
 			</example>
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#ConvertTo-ADSIPath</maml:uri>
-			</maml:navigationLink>
-			<maml:navigationLink>
-				<maml:linkText>[ADS_NAME_TYPE_ENUM]: &lt;http://msdn.microsoft.com/en-us/library/windows/desktop/aa772267.aspx&gt;</maml:linkText>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-GroupMember</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Get-LocalGroup</name>
+			<name>Get-Group</name>
 			<verb>Get</verb>
-			<noun>LocalGroup</noun>
+			<noun>Group</noun>
 			<maml:description>
 				<maml:para>Возвращает локальную группу безопасности.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.0.0</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
-			<maml:para>Get-LocalGroup возвращает локальную группу (или группы) безопасности с указанными параметрами.</maml:para>
+			<maml:para>Get-Group возвращает локальную группу (или группы) безопасности с указанными параметрами.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Get-LocalGroup</maml:name>
-				<parameter required="" position="" pipelineInput="" />
+				<maml:name>Get-Group</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+					<maml:name>Sid</maml:name>
+					<parameterValue required="true">SecurityIdentifier</parameterValue>
+				</parameter>
 			</syntaxItem>
 			<syntaxItem>
-				<maml:name>Get-LocalGroup</maml:name>
-				<parameter required="true" position="2" pipelineInput="true (ByValue, ByPropertyName)" globbing="false">
+				<maml:name>Get-Group</maml:name>
+				<parameter required="false" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Filter</maml:name>
+					<parameterValue required="false">String</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+					<maml:name>Description</maml:name>
+					<parameterValue required="false">String</parameterValue>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Get-Group</maml:name>
+				<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 					<maml:name>Name</maml:name>
-					<parameterValue required="true">String</parameterValue>
+					<parameterValue required="false">String</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="true" position="2" pipelineInput="true (ByValue, ByPropertyName)" globbing="false">
+			<parameter required="false" position="2" pipelineInput="false" globbing="false">
+				<maml:name>Filter</maml:name>
+				<maml:description>
+					<maml:para>Идентификатор группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">String</parameterValue>
+				<defaultValue>*</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+				<maml:name>Description</maml:name>
+				<maml:description>
+					<maml:para>Описание искомой группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">String</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 				<maml:name>Name</maml:name>
 				<maml:description>
 					<maml:para>Идентификатор группы безопасности</maml:para>
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
 			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+				<maml:name>Sid</maml:name>
+				<maml:description>
+					<maml:para>Идентификатор безопасности искомой группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">SecurityIdentifier</parameterValue>
+			</parameter>
 		</parameters>
-		<returnValues>
-			<returnValue>
+		<inputTypes>
+			<inputType>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.GroupPrincipal</maml:name>
 					<maml:description>
-						<maml:para>ADSI объект, представляющий группу безопасности.</maml:para>
+						<maml:para>Объект, определяющий параметры поиска.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
-					<maml:para>ADSI объект, представляющий группу безопасности.</maml:para>
+					<maml:para>Объект, определяющий параметры поиска.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<returnValues>
+			<returnValue>
+				<dev:type>
+					<maml:name>System.DirectoryServices.AccountManagement.GroupPrincipal</maml:name>
+					<maml:description>
+						<maml:para>Объект, представляющий группу безопасности.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Объект, представляющий группу безопасности.</maml:para>
 				</maml:description>
 			</returnValue>
 		</returnValues>
@@ -287,7 +321,7 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-LocalGroup;</dev:code>
+				<dev:code>Get-Group -Filter '*';</dev:code>
 				<maml:remarks>
 					<maml:para>Возвращает все локальные группы безопасности.</maml:para>
 				</maml:remarks>
@@ -297,40 +331,50 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-LocalGroup -Name 'Пользователи';</dev:code>
+				<dev:code>Get-Group -Name 'Пользователи';</dev:code>
 				<maml:remarks>
 					<maml:para>Возвращает группу безопасности Пользователи.</maml:para>
+				</maml:remarks>
+			</example>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 3 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Group -Filter 'Адм*';</dev:code>
+				<maml:remarks>
+					<maml:para>Возвращает локальные группы безопасности: Администраторы и другие, имена которых начинаются на 'Адм'.</maml:para>
 				</maml:remarks>
 			</example>
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroup</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-Group</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Get-LocalGroupMember</name>
+			<name>Get-GroupMember</name>
 			<verb>Get</verb>
-			<noun>LocalGroupMember</noun>
+			<noun>GroupMember</noun>
 			<maml:description>
 				<maml:para>Возвращает членов локальной группы безопасности.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.0.0</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
-			<maml:para>Get-LocalGroupMember возвращает членов указанной локальной группы безопасности. В том числе - и с учётом транзитивности при указании флага `-Recursive`</maml:para>
+			<maml:para>Get-GroupMember возвращает членов указанной локальной группы безопасности. В том числе - и с учётом транзитивности при указании флага `-Recursive`</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Get-LocalGroupMember</maml:name>
+				<maml:name>Get-GroupMember</maml:name>
 				<parameter required="true" position="2" pipelineInput="true (ByValue)" globbing="false">
-					<maml:name>Identity</maml:name>
-					<parameterValue required="true">DirectoryEntry</parameterValue>
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>Recursive</maml:name>
@@ -339,11 +383,11 @@
 		</syntax>
 		<parameters>
 			<parameter required="true" position="2" pipelineInput="true (ByValue)" globbing="false">
-				<maml:name>Identity</maml:name>
+				<maml:name>Group</maml:name>
 				<maml:description>
 					<maml:para>Группа безопасности</maml:para>
 				</maml:description>
-				<parameterValue required="True">DirectoryEntry</parameterValue>
+				<parameterValue required="True">GroupPrincipal</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>Recursive</maml:name>
@@ -357,7 +401,7 @@
 		<inputTypes>
 			<inputType>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.GroupPrincipal</maml:name>
 					<maml:description>
 						<maml:para>Группа безопасности.</maml:para>
 					</maml:description>
@@ -370,24 +414,13 @@
 		<returnValues>
 			<returnValue>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.Principal</maml:name>
 					<maml:description>
 						<maml:para>Члены указанной группы безопасности.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
 					<maml:para>Члены указанной группы безопасности.</maml:para>
-				</maml:description>
-			</returnValue>
-			<returnValue>
-				<dev:type>
-					<maml:name>PSObject</maml:name>
-					<maml:description>
-						<maml:para>Для групп типа `NT AUTHORITY/ИНТЕРАКТИВНЫЕ` возвращён будет объект, содержащий свойства `Path`, `Name`, `objectSid`, `groupType`. `SchemaClassName` будет установлен в `Group`, `AuthenticationType` в `Secure`. Дополнительно будет установлен аттрибут `NtAuthority` в `$true`.</maml:para>
-					</maml:description>
-				</dev:type>
-				<maml:description>
-					<maml:para>Для групп типа `NT AUTHORITY/ИНТЕРАКТИВНЫЕ` возвращён будет объект, содержащий свойства `Path`, `Name`, `objectSid`, `groupType`. `SchemaClassName` будет установлен в `Group`, `AuthenticationType` в `Secure`. Дополнительно будет установлен аттрибут `NtAuthority` в `$true`.</maml:para>
 				</maml:description>
 			</returnValue>
 		</returnValues>
@@ -397,7 +430,7 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-LocalGroup -Name Пользователи | Get-LocalGroupMember -Recursive;</dev:code>
+				<dev:code>Get-Group -Name Пользователи | Get-LocalGroupMember -Recursive;</dev:code>
 				<maml:remarks>
 					<maml:para>Возвращает всех членов группы Пользователи с учётом транзитивности.</maml:para>
 				</maml:remarks>
@@ -405,29 +438,29 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-LocalGroupMember</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Get-GroupMember</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>New-LocalGroup</name>
+			<name>New-Group</name>
 			<verb>New</verb>
-			<noun>LocalGroup</noun>
+			<noun>Group</noun>
 			<maml:description>
 				<maml:para>Создаёт локальную группу безопасности.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.0.0</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
-			<maml:para>New-LocalGroup создаёт локальную группу безопасности с указанными аттрибутами.</maml:para>
+			<maml:para>New-Group создаёт локальную группу безопасности с указанными аттрибутами.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>New-LocalGroup</maml:name>
+				<maml:name>New-Group</maml:name>
 				<parameter required="true" position="2" pipelineInput="true (ByValue, ByPropertyName)" globbing="false">
 					<maml:name>Name</maml:name>
 					<parameterValue required="true">String</parameterValue>
@@ -482,7 +515,7 @@
 		<returnValues>
 			<returnValue>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.GroupPrincipal</maml:name>
 					<maml:description>
 						<maml:para>Созданная группа безопасности.</maml:para>
 					</maml:description>
@@ -498,7 +531,7 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>New-LocalGroup -Name 'MyUsers' -Description 'Users of my application';</dev:code>
+				<dev:code>New-Group -Name 'MyUsers' -Description 'Users of my application';</dev:code>
 				<maml:remarks>
 					<maml:para>Создаёт локальную группу безопасности.</maml:para>
 				</maml:remarks>
@@ -506,32 +539,58 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-LocalGroup</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#New-Group</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Remove-LocalGroup</name>
+			<name>Remove-Group</name>
 			<verb>Remove</verb>
-			<noun>LocalGroup</noun>
+			<noun>Group</noun>
 			<maml:description>
 				<maml:para>Удаляет локальную группу безопасности.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.0.0</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
-			<maml:para>Remove-LocalGroup удаляет локальную группу (или группы) безопасности, переданные по конвейеру.</maml:para>
+			<maml:para>Remove-Group удаляет локальную группу (или группы) безопасности, переданную по конвейеру.</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Remove-LocalGroup</maml:name>
+				<maml:name>Remove-Group</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+					<maml:name>Sid</maml:name>
+					<parameterValue required="true">SecurityIdentifier</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Remove-Group</maml:name>
 				<parameter required="true" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
 					<maml:name>Name</maml:name>
 					<parameterValue required="true">String</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Remove-Group</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>Identity</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>WhatIf</maml:name>
@@ -545,9 +604,23 @@
 			<parameter required="true" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
 				<maml:name>Name</maml:name>
 				<maml:description>
-					<maml:para>Группа безопасности к удалению Идентификатор группы безопасности</maml:para>
+					<maml:para>Идентификатор группы безопасности</maml:para>
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+				<maml:name>Sid</maml:name>
+				<maml:description>
+					<maml:para>Идентификатор безопасности искомой группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">SecurityIdentifier</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>Identity</maml:name>
+				<maml:description>
+					<maml:para>Группа безопасности к удалению Идентификатор группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">GroupPrincipal</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>WhatIf</maml:name>
@@ -561,13 +634,13 @@
 		<inputTypes>
 			<inputType>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.GroupPrincipal</maml:name>
 					<maml:description>
-						<maml:para>Группа безопасности.</maml:para>
+						<maml:para>Группа безопасности, которую следует удалить.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
-					<maml:para>Группа безопасности.</maml:para>
+					<maml:para>Группа безопасности, которую следует удалить.</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>
@@ -577,47 +650,95 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-LocalGroup -Name 'Пользователи' | Remove-LocalGroup;</dev:code>
+				<dev:code>Get-Group -Filter 'test*' | Remove-Group -Verbose;</dev:code>
 				<maml:remarks>
-					<maml:para>Удаляет группу безопасности 'Пользователи'.</maml:para>
+					<maml:para>Удаляет группы безопасности, имена которых начинаются с 'test'.</maml:para>
 				</maml:remarks>
 			</example>
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroup</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-Group</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Remove-LocalGroupMember</name>
+			<name>Remove-GroupMember</name>
 			<verb>Remove</verb>
-			<noun>LocalGroupMember</noun>
+			<noun>GroupMember</noun>
 			<maml:description>
 				<maml:para>Удаляет учётные записи и/или группы из указанной локальной группы безопасности.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.0.0</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
 			<maml:para>Удаляет учётные записи и/или группы из указанной локальной группы безопасности. В качестве удаляемых членов могут быть использованы как локальные учётные записи / группы, так и доменные учётные записи / группы (`Get-ADUser`, `Get-ADGroup`).</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Remove-LocalGroupMember</maml:name>
+				<maml:name>Remove-GroupMember</maml:name>
 				<parameter required="true" position="2" pipelineInput="false" globbing="false">
 					<maml:name>Group</maml:name>
-					<parameterValue required="true">DirectoryEntry</parameterValue>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
 				</parameter>
-				<parameter required="true" position="3" pipelineInput="true (ByValue)" globbing="false">
-					<maml:name>Identity</maml:name>
-					<parameterValue required="true">Object</parameterValue>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>Member</maml:name>
+					<parameterValue required="true">Principal[]</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
-					<maml:name>PassThru</maml:name>
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Remove-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ADMember</maml:name>
+					<parameterValue required="true">ADAccount[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Remove-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ADSIMember</maml:name>
+					<parameterValue required="true">DirectoryEntry[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Remove-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="false" globbing="false">
+					<maml:name>OtherMember</maml:name>
+					<parameterValue required="true">Array</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>WhatIf</maml:name>
@@ -633,22 +754,35 @@
 				<maml:description>
 					<maml:para>Группа безопасности</maml:para>
 				</maml:description>
-				<parameterValue required="True">DirectoryEntry</parameterValue>
+				<parameterValue required="True">GroupPrincipal</parameterValue>
 			</parameter>
-			<parameter required="true" position="3" pipelineInput="true (ByValue)" globbing="false">
-				<maml:name>Identity</maml:name>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>Member</maml:name>
 				<maml:description>
 					<maml:para>Объект безопасности для удаления из группы</maml:para>
 				</maml:description>
-				<parameterValue required="True">Object</parameterValue>
+				<parameterValue required="True">Principal[]</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="false" globbing="false">
-				<maml:name>PassThru</maml:name>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ADMember</maml:name>
 				<maml:description>
-					<maml:para>Передавать ли учётную запись далее по конвейеру</maml:para>
+					<maml:para>Объект безопасности AD для удаления из группы</maml:para>
 				</maml:description>
-				<parameterValue required="True">SwitchParameter</parameterValue>
-				<defaultValue>False</defaultValue>
+				<parameterValue required="True">ADAccount[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ADSIMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности ADSI для добавления в группу</maml:para>
+				</maml:description>
+				<parameterValue required="True">DirectoryEntry[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="false" globbing="false">
+				<maml:name>OtherMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности в любом из трёх выше указанных типов для добавления в группу Использовать данный параметр стоит только для обеспечения совместимости при переходе от использования одного набора классов к другому.</maml:para>
+				</maml:description>
+				<parameterValue required="True">Array</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>WhatIf</maml:name>
@@ -662,7 +796,7 @@
 		<inputTypes>
 			<inputType>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.Principal</maml:name>
 					<maml:description>
 						<maml:para>Учётные записи и группы, которые необходимо удалить из указанной группы.</maml:para>
 					</maml:description>
@@ -673,24 +807,24 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>Microsoft.ActiveDirectory.Management.ADUser</maml:name>
+					<maml:name>Microsoft.ActiveDirectory.Management.ADAccount</maml:name>
 					<maml:description>
-						<maml:para>Учётные записи AD, которые необходимо удалить из указанной группы.</maml:para>
+						<maml:para>Учётные записи AD, которые необходимо удалить из указанной группы (полученные через `Get-ADUser`, `Get-ADGroup`).</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
-					<maml:para>Учётные записи AD, которые необходимо удалить из указанной группы.</maml:para>
+					<maml:para>Учётные записи AD, которые необходимо удалить из указанной группы (полученные через `Get-ADUser`, `Get-ADGroup`).</maml:para>
 				</maml:description>
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>Microsoft.ActiveDirectory.Management.ADGroup</maml:name>
+					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
 					<maml:description>
-						<maml:para>Группы AD, которые необходимо удалить из указанной группы.</maml:para>
+						<maml:para>Учётные записи и группы, которые необходимо удалить из указанной группы.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
-					<maml:para>Группы AD, которые необходимо удалить из указанной группы.</maml:para>
+					<maml:para>Учётные записи и группы, которые необходимо удалить из указанной группы.</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>
@@ -700,7 +834,17 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-ADUser 'admin-sergey.s.betke' | Remove-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );</dev:code>
+				<dev:code>Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Verbose;</dev:code>
+				<maml:remarks>
+					<maml:para>Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".</maml:para>
+				</maml:remarks>
+			</example>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 2 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -OtherMember ( Get-ADUser 'admin-sergey.s.betke' ) -Verbose;</dev:code>
 				<maml:remarks>
 					<maml:para>Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".</maml:para>
 				</maml:remarks>
@@ -708,26 +852,33 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-GroupMember</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Test-LocalGroup</name>
+			<name>Test-Group</name>
 			<verb>Test</verb>
-			<noun>LocalGroup</noun>
+			<noun>Group</noun>
 			<maml:description>
 				<maml:para>Проверяет наличие локальной группы безопасности.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.0.0</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Test-LocalGroup</maml:name>
+				<maml:name>Test-Group</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+					<maml:name>Sid</maml:name>
+					<parameterValue required="true">SecurityIdentifier</parameterValue>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Test-Group</maml:name>
 				<parameter required="true" position="2" pipelineInput="true (ByValue, ByPropertyName)" globbing="false">
 					<maml:name>Name</maml:name>
 					<parameterValue required="true">String</parameterValue>
@@ -742,6 +893,13 @@
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
 			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+				<maml:name>Sid</maml:name>
+				<maml:description>
+					<maml:para>Идентификатор безопасности искомой группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">SecurityIdentifier</parameterValue>
+			</parameter>
 		</parameters>
 		<returnValues>
 			<returnValue>
@@ -752,36 +910,88 @@
 		</returnValues>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroup</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-Group</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
-			<name>Test-LocalGroupMember</name>
+			<name>Test-GroupMember</name>
 			<verb>Test</verb>
-			<noun>LocalGroupMember</noun>
+			<noun>GroupMember</noun>
 			<maml:description>
 				<maml:para>Проверяет наличие учётных записей в указанной локальной группе безопасности.</maml:para>
 			</maml:description>
 			<maml:copyright>
 				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
 			</maml:copyright>
-			<dev:version>1.0.0</dev:version>
+			<dev:version>2.0.0</dev:version>
 		</details>
 		<maml:description>
-			<maml:para>Get-LocalGroupMember проверяет наличие учётных записей в указанной локальной группе безопасности. В том числе - и с учётом транзитивности при указании флага `-Recursive`</maml:para>
+			<maml:para>Test-GroupMember проверяет наличие учётных записей в указанной локальной группе безопасности. В том числе - и с учётом транзитивности при указании флага `-Recursive`</maml:para>
 		</maml:description>
 		<syntax>
 			<syntaxItem>
-				<maml:name>Test-LocalGroupMember</maml:name>
+				<maml:name>Test-GroupMember</maml:name>
 				<parameter required="true" position="2" pipelineInput="false" globbing="false">
 					<maml:name>Group</maml:name>
-					<parameterValue required="true">DirectoryEntry</parameterValue>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
 				</parameter>
-				<parameter required="true" position="3" pipelineInput="true (ByValue)" globbing="false">
-					<maml:name>Identity</maml:name>
-					<parameterValue required="true">Object</parameterValue>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Recursive</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Test-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>Member</maml:name>
+					<parameterValue required="true">Principal[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Recursive</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Test-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ADMember</maml:name>
+					<parameterValue required="true">ADAccount[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Recursive</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Test-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ADSIMember</maml:name>
+					<parameterValue required="true">DirectoryEntry[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Recursive</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Test-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="false" globbing="false">
+					<maml:name>OtherMember</maml:name>
+					<parameterValue required="true">Array</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>Recursive</maml:name>
@@ -794,14 +1004,35 @@
 				<maml:description>
 					<maml:para>Группа безопасности</maml:para>
 				</maml:description>
-				<parameterValue required="True">DirectoryEntry</parameterValue>
+				<parameterValue required="True">GroupPrincipal</parameterValue>
 			</parameter>
-			<parameter required="true" position="3" pipelineInput="true (ByValue)" globbing="false">
-				<maml:name>Identity</maml:name>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>Member</maml:name>
 				<maml:description>
-					<maml:para>Объект безопасности для проверки членства в указанной группе</maml:para>
+					<maml:para>Объект безопасности для проверки членства в группе</maml:para>
 				</maml:description>
-				<parameterValue required="True">Object</parameterValue>
+				<parameterValue required="True">Principal[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ADMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности AD для проверки членства в группе</maml:para>
+				</maml:description>
+				<parameterValue required="True">ADAccount[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ADSIMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности ADSI для проверки членства в группе</maml:para>
+				</maml:description>
+				<parameterValue required="True">DirectoryEntry[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="false" globbing="false">
+				<maml:name>OtherMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности в любом из трёх выше указанных типов для проверки членства в группе. Использовать данный параметр стоит только для обеспечения совместимости при переходе от использования одного набора классов к другому.</maml:para>
+				</maml:description>
+				<parameterValue required="True">Array</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>Recursive</maml:name>
@@ -815,7 +1046,7 @@
 		<inputTypes>
 			<inputType>
 				<dev:type>
-					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:name>System.DirectoryServices.AccountManagement.Principal</maml:name>
 					<maml:description>
 						<maml:para>Учётные записи и группы, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
 					</maml:description>
@@ -826,7 +1057,7 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>Microsoft.ActiveDirectory.Management.ADUser</maml:name>
+					<maml:name>Microsoft.ActiveDirectory.Management.ADAccount</maml:name>
 					<maml:description>
 						<maml:para>Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
 					</maml:description>
@@ -837,13 +1068,13 @@
 			</inputType>
 			<inputType>
 				<dev:type>
-					<maml:name>Microsoft.ActiveDirectory.Management.ADGroup</maml:name>
+					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
 					<maml:description>
-						<maml:para>Группы AD, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
+						<maml:para>Учётные записи и группы ADSI, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
 					</maml:description>
 				</dev:type>
 				<maml:description>
-					<maml:para>Группы AD, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
+					<maml:para>Учётные записи и группы ADSI, членство которых необходимо проверить в локальной группе безопасности.</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>
@@ -866,7 +1097,27 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Test-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Member ( Get-ADUser 'admin-sergey.s.betke' ) -Recursive;</dev:code>
+				<dev:code>Get-ADUser 'admin-sergey.s.betke' | Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Recursive;</dev:code>
+				<maml:remarks>
+					<maml:para>Проверяем, является ли пользователь `username` членом локальной группы безопасности Пользователи с учётом транзитивности.</maml:para>
+				</maml:remarks>
+			</example>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 2 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Member (Get-ADUser 'admin-sergey.s.betke');</dev:code>
+				<maml:remarks>
+					<maml:para>Проверяем, является ли пользователь `username` членом локальной группы безопасности Пользователи.</maml:para>
+				</maml:remarks>
+			</example>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 3 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>( [ADSI]'WinNT://csm/admin-sergey.s.betke' ) | Test-GroupMember -Group ( Get-Group -Name Пользователи );</dev:code>
 				<maml:remarks>
 					<maml:para>Проверяем, является ли пользователь `username` членом локальной группы безопасности Пользователи с учётом транзитивности.</maml:para>
 				</maml:remarks>
@@ -874,7 +1125,7 @@
 		</examples>
 		<maml:relatedLinks>
 			<maml:navigationLink>
-				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-LocalGroupMember</maml:uri>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-GroupMember</maml:uri>
 			</maml:navigationLink>
 		</maml:relatedLinks>
 	</command>
