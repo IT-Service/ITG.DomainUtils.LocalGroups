@@ -14,7 +14,7 @@
 RootModule = 'ITG.DomainUtils.LocalGroups.psm1'
 
 # Номер версии данного модуля.
-ModuleVersion = '2.0.0'
+ModuleVersion = '2.1.0'
 
 # Уникальный идентификатор данного модуля
 GUID = '820B6CFA-3D70-42E4-8C6E-276742D0CC4B'
