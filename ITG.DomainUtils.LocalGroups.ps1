@@ -476,6 +476,9 @@ Function Test-GroupMember {
 .Inputs
 	Microsoft.ActiveDirectory.Management.ADAccount
 	Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.
+.Inputs
+	System.DirectoryServices.DirectoryEntry
+	Учётные записи и группы ADSI, членство которых необходимо проверить в локальной группе безопасности.
 .Outputs
 	Bool
 	Наличие ( `$true` ) или отсутствие ( `$false` ) указанных объектов в указанной группе
@@ -489,6 +492,10 @@ Function Test-GroupMember {
 	Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Member (Get-ADUser 'admin-sergey.s.betke');
 	Проверяем, является ли пользователь `username` членом локальной группы безопасности
 	Пользователи.
+.Example
+	( [ADSI]'WinNT://csm/admin-sergey.s.betke' ) | Test-GroupMember -Group ( Get-Group -Name Пользователи );
+	Проверяем, является ли пользователь `username` членом локальной группы безопасности
+	Пользователи с учётом транзитивности.
 #>
 	[CmdletBinding(
 		DefaultParameterSetName = 'Sid'
@@ -504,23 +511,42 @@ Function Test-GroupMember {
 		[System.DirectoryServices.AccountManagement.GroupPrincipal]
 		$Group
 	,
-		# Объект безопасности для проверки членства в указанной группе, точнее - его Sid.
-		# При передаче по конвейеру принимает Sid как локальных учётных записей, так и объектов AD.
+		# Объект безопасности для проверки членства в группе
 		[Parameter(
 			Mandatory = $true
-			, ValueFromPipelineByPropertyName = $true
-			, ParameterSetName = 'Sid'
-		)]
-		[System.Security.Principal.SecurityIdentifier[]]
-		$Sid
-	,
-		# Объект безопасности для проверки членства в указанной группе.
-		[Parameter(
-			Mandatory = $true
+			, ValueFromPipeline = $true
 			, ParameterSetName = 'Member'
 		)]
-		[Alias( 'User' )]
+		[System.DirectoryServices.AccountManagement.Principal[]]
 		$Member
+	,
+		# Объект безопасности AD для проверки членства в группе
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADMember'
+		)]
+		[Microsoft.ActiveDirectory.Management.ADAccount[]]
+		$ADMember
+	,
+		# Объект безопасности ADSI для проверки членства в группе
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADSIMember'
+		)]
+		[System.DirectoryServices.DirectoryEntry[]]
+		$ADSIMember
+	,
+		# Объект безопасности в любом из трёх выше указанных типов для проверки членства в группе.
+		# Использовать данный параметр стоит только для обеспечения совместимости при переходе
+		# от использования одного набора классов к другому.
+		[Parameter(
+			Mandatory = $true
+			, ParameterSetName = 'UnknownTypeMember'
+		)]
+		[Array]
+		$OtherMember
 	,
 		# Запросить членов группы с учётом транзитивности
 		[Switch]
@@ -538,20 +564,34 @@ Function Test-GroupMember {
 	process {
 		try {
    			switch ( $PsCmdlet.ParameterSetName ) {
-				'Sid' {
-					$Sid `
-					| % {
-						$MembersSids -contains $_;
-					};
-					break;
-				}
-				'Member' {
-					Member `
+				'UnknownTypeMember' {
+					$OtherMember `
 					| Test-GroupMember `
 						-Group $Group `
 						-Recursive:$Recursive `
 						-Verbose:$VerbosePreference `
 					;
+					break;
+				}
+				'Member' {
+					$Member `
+					| % {
+						$MembersSids -contains ( $_.Sid );
+					};
+					break;
+				}
+				'ADMember' {
+					$ADMember `
+					| % {
+						$MembersSids -contains ( $_.Sid );
+					};
+					break;
+				}
+				'ADSIMember' {
+					$ADSIMember `
+					| % {
+						$MembersSids -contains ( New-Object -Type System.Security.Principal.SecurityIdentifier -ArgumentList ( [Byte[]] $_.objectSid[0] ), 0 );
+					};
 					break;
 				}
 			};
@@ -737,6 +777,9 @@ Function Remove-GroupMember {
 .Example
 	Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Verbose;
 	Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
+.Example
+	Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -OtherMember ( Get-ADUser 'admin-sergey.s.betke' ) -Verbose;
+	Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
 #>
 	[CmdletBinding(
 		SupportsShouldProcess = $true
@@ -834,10 +877,9 @@ Function Remove-GroupMember {
 				}
 				'ADSIMember' {
 					$ADSIMember `
-					| ConvertTo-ADSIPath `
 					| % {
-						if ( $PSCmdlet.ShouldProcess( "$( $_ ) => $( $Group.Name )" ) ) {
-							$ADSIGroup.PSBase.Invoke( 'Remove', $_ );
+						if ( $PSCmdlet.ShouldProcess( "$( $_.Name ) => $( $Group.Name )" ) ) {
+							$ADSIGroup.PSBase.Invoke( 'Remove', $_.Path );
 						};
 					};
 					break;

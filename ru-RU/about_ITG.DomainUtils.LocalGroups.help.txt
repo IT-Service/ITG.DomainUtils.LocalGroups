@@ -87,9 +87,15 @@
 
 Проверяет наличие учётных записей в указанной локальной группе безопасности.
 
-	Test-GroupMember [-Group] <GroupPrincipal> -Sid <SecurityIdentifier[]> [-Recursive] <CommonParameters>
+	Test-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
 
-	Test-GroupMember [-Group] <GroupPrincipal> -Member <Object> [-Recursive] <CommonParameters>
+	Test-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-Recursive] <CommonParameters>
 
 
 [Add-GroupMember]: <#add-groupmember> "Добавляет учётные записи и/или группы в указанную локальную группу безопасности."

@@ -87,9 +87,15 @@
 
 Проверяет наличие учётных записей в указанной локальной группе безопасности.
 
-	Test-GroupMember [-Group] <GroupPrincipal> -Sid <SecurityIdentifier[]> [-Recursive] <CommonParameters>
+	Test-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
 
-	Test-GroupMember [-Group] <GroupPrincipal> -Member <Object> [-Recursive] <CommonParameters>
+	Test-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-Recursive] <CommonParameters>
 
 ОПИСАНИЕ
 --------
@@ -617,6 +623,10 @@ Remove-LocalGroupMember
 
 		Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Verbose;
 
+2. Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
+
+		Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -OtherMember ( Get-ADUser 'admin-sergey.s.betke' ) -Verbose;
+
 ##### ССЫЛКИ ПО ТЕМЕ
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-GroupMember)
@@ -633,9 +643,15 @@ Test-LocalGroupMember
 
 ##### СИНТАКСИС
 
-	Test-GroupMember [-Group] <GroupPrincipal> -Sid <SecurityIdentifier[]> [-Recursive] <CommonParameters>
+	Test-GroupMember [-Group] <GroupPrincipal> [-Recursive] <CommonParameters>
 
-	Test-GroupMember [-Group] <GroupPrincipal> -Member <Object> [-Recursive] <CommonParameters>
+	Test-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-Recursive] <CommonParameters>
+
+	Test-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-Recursive] <CommonParameters>
 
 ##### ВХОДНЫЕ ДАННЫЕ
 
@@ -643,6 +659,8 @@ Test-LocalGroupMember
 Учётные записи и группы, членство которых необходимо проверить в локальной группе безопасности.
 - [Microsoft.ActiveDirectory.Management.ADAccount][]
 Учётные записи AD, членство которых необходимо проверить в локальной группе безопасности.
+- System.DirectoryServices.DirectoryEntry
+Учётные записи и группы ADSI, членство которых необходимо проверить в локальной группе безопасности.
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
@@ -659,19 +677,35 @@ Test-LocalGroupMember
 	* Принимать входные данные конвейера? false
 	* Принимать подстановочные знаки? нет
 
-- `[SecurityIdentifier[]] Sid`
-	Объект безопасности для проверки членства в указанной группе, точнее - его Sid.
-	При передаче по конвейеру принимает Sid как локальных учётных записей, так и объектов AD.
-	* Тип: [System.Security.Principal.SecurityIdentifier][][]
+- `[Principal[]] Member`
+	Объект безопасности для проверки членства в группе
+	* Тип: System.DirectoryServices.AccountManagement.Principal[]
 	* Требуется? да
 	* Позиция? named
-	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать входные данные конвейера? true (ByValue)
 	* Принимать подстановочные знаки? нет
 
-- `[Object] Member`
-	Объект безопасности для проверки членства в указанной группе.
-	* Тип: [System.Object][]
-	* Псевдонимы: User
+- `[ADAccount[]] ADMember`
+	Объект безопасности AD для проверки членства в группе
+	* Тип: [Microsoft.ActiveDirectory.Management.ADAccount][][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[DirectoryEntry[]] ADSIMember`
+	Объект безопасности ADSI для проверки членства в группе
+	* Тип: System.DirectoryServices.DirectoryEntry[]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[Array] OtherMember`
+	Объект безопасности в любом из трёх выше указанных типов для проверки членства в группе.
+	Использовать данный параметр стоит только для обеспечения совместимости при переходе
+	от использования одного набора классов к другому.
+	* Тип: [System.Array][]
 	* Требуется? да
 	* Позиция? named
 	* Принимать входные данные конвейера? false
@@ -700,6 +734,11 @@ Test-LocalGroupMember
 
 		Test-GroupMember -Group ( Get-Group -Name Пользователи ) -Member (Get-ADUser 'admin-sergey.s.betke');
 
+3. Проверяем, является ли пользователь `username` членом локальной группы безопасности
+Пользователи с учётом транзитивности.
+
+		( [ADSI]'WinNT://csm/admin-sergey.s.betke' ) | Test-GroupMember -Group ( Get-Group -Name Пользователи );
+
 ##### ССЫЛКИ ПО ТЕМЕ
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Test-GroupMember)
@@ -714,7 +753,6 @@ Test-LocalGroupMember
 [Remove-Group]: <#remove-group> "Удаляет локальную группу безопасности."
 [Remove-GroupMember]: <#remove-groupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
 [System.Array]: <http://msdn.microsoft.com/ru-ru/library/system.array.aspx> "Array Class (System)"
-[System.Object]: <http://msdn.microsoft.com/ru-ru/library/system.object.aspx> "Object Class (System)"
 [System.Security.Principal.SecurityIdentifier]: <http://msdn.microsoft.com/ru-ru/library/system.security.principal.securityidentifier.aspx> "SecurityIdentifier Class (System.Security.Principal)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"
 [Test-Group]: <#test-group> "Проверяет наличие локальной группы безопасности."
