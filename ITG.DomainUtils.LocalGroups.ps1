@@ -580,6 +580,9 @@ Function Add-GroupMember {
 .Inputs
 	Microsoft.ActiveDirectory.Management.ADAccount
 	Учётные записи AD, которые необходимо включить в локальную группу безопасности.
+.Inputs
+	System.DirectoryServices.DirectoryEntry
+	Учётные записи и группы ADSI, которые необходимо включить в локальную группу безопасности.
 .Link
 	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-GroupMember
 .Example
@@ -613,7 +616,6 @@ Function Add-GroupMember {
 			, ParameterSetName = 'Member'
 		)]
 		[System.DirectoryServices.AccountManagement.Principal[]]
-		[Alias( 'User' )]
 		$Member
 	,
 		# Объект безопасности AD для добавления в группу
@@ -624,6 +626,25 @@ Function Add-GroupMember {
 		)]
 		[Microsoft.ActiveDirectory.Management.ADAccount[]]
 		$ADMember
+	,
+		# Объект безопасности ADSI для добавления в группу
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADSIMember'
+		)]
+		[System.DirectoryServices.DirectoryEntry[]]
+		$ADSIMember
+	,
+		# Объект безопасности в любом из трёх выше указанных типов для добавления в группу
+		# Использовать данный параметр стоит только для обеспечения совместимости при переходе
+		# от использования одного набора классов к другому.
+		[Parameter(
+			Mandatory = $true
+			, ParameterSetName = 'UnknownTypeMember'
+		)]
+		[Array]
+		$OtherMember
 	,
 		# Передавать ли учётную запись далее по конвейеру
 		[Switch]
@@ -642,6 +663,14 @@ Function Add-GroupMember {
 	process {
 		try {
    			switch ( $PsCmdlet.ParameterSetName ) {
+				'UnknownTypeMember' {
+					$OtherMember `
+					| Add-GroupMember `
+						-Group $Group `
+						-Verbose:$VerbosePreference `
+					;
+					break;
+				}
 				'Member' {
 					$Member `
 					| % {
@@ -662,13 +691,23 @@ Function Add-GroupMember {
 					};
 					break;
 				}
+				'ADSIMember' {
+					$ADSIMember `
+					| ConvertTo-ADSIPath `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_ ) => $( $Group.Name )" ) ) {
+							$ADSIGroup.PSBase.Invoke( 'Add', $_ );
+						};
+					};
+					break;
+				}
 			};
-			if ( $PassThru ) { return $input; };
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
 			;
 		};
+		if ( $PassThru ) { return $input; };
 	}
 }
 
@@ -696,7 +735,7 @@ Function Remove-GroupMember {
 .Link
 	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-GroupMember
 .Example
-	Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи );
+	Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Verbose;
 	Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
 #>
 	[CmdletBinding(
@@ -732,6 +771,25 @@ Function Remove-GroupMember {
 		)]
 		[Microsoft.ActiveDirectory.Management.ADAccount[]]
 		$ADMember
+	,
+		# Объект безопасности ADSI для добавления в группу
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADSIMember'
+		)]
+		[System.DirectoryServices.DirectoryEntry[]]
+		$ADSIMember
+	,
+		# Объект безопасности в любом из трёх выше указанных типов для добавления в группу
+		# Использовать данный параметр стоит только для обеспечения совместимости при переходе
+		# от использования одного набора классов к другому.
+		[Parameter(
+			Mandatory = $true
+			, ParameterSetName = 'UnknownTypeMember'
+		)]
+		[Array]
+		$OtherMember
 	)
 
 	begin {
@@ -746,6 +804,14 @@ Function Remove-GroupMember {
 	process {
 		try {
    			switch ( $PsCmdlet.ParameterSetName ) {
+				'UnknownTypeMember' {
+					$OtherMember `
+					| Remove-GroupMember `
+						-Group $Group `
+						-Verbose:$VerbosePreference `
+					;
+					break;
+				}
 				'Member' {
 					$Member `
 					| % {
@@ -758,6 +824,16 @@ Function Remove-GroupMember {
 				}
 				'ADMember' {
 					$ADMember `
+					| ConvertTo-ADSIPath `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_ ) => $( $Group.Name )" ) ) {
+							$ADSIGroup.PSBase.Invoke( 'Remove', $_ );
+						};
+					};
+					break;
+				}
+				'ADSIMember' {
+					$ADSIMember `
 					| ConvertTo-ADSIPath `
 					| % {
 						if ( $PSCmdlet.ShouldProcess( "$( $_ ) => $( $Group.Name )" ) ) {

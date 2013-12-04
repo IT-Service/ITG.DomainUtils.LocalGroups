@@ -61,6 +61,10 @@
 
 	Add-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
+	Add-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
 #### КРАТКОЕ ОПИСАНИЕ [Get-GroupMember][]
 
 Возвращает членов локальной группы безопасности.
@@ -74,6 +78,10 @@
 	Remove-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-WhatIf] [-Confirm] <CommonParameters>
 
 	Remove-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-WhatIf] [-Confirm] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [Test-GroupMember][]
 
@@ -370,12 +378,18 @@ Add-LocalGroupMember
 
 	Add-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
+	Add-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
 ##### ВХОДНЫЕ ДАННЫЕ
 
 - System.DirectoryServices.AccountManagement.Principal
 Учётные записи и группы, которые необходимо включить в локальную группу безопасности.
 - [Microsoft.ActiveDirectory.Management.ADAccount][]
 Учётные записи AD, которые необходимо включить в локальную группу безопасности.
+- System.DirectoryServices.DirectoryEntry
+Учётные записи и группы ADSI, которые необходимо включить в локальную группу безопасности.
 
 ##### ПАРАМЕТРЫ
 
@@ -390,7 +404,6 @@ Add-LocalGroupMember
 - `[Principal[]] Member`
 	Объект безопасности для добавления в группу
 	* Тип: System.DirectoryServices.AccountManagement.Principal[]
-	* Псевдонимы: User
 	* Требуется? да
 	* Позиция? named
 	* Принимать входные данные конвейера? true (ByValue)
@@ -402,6 +415,24 @@ Add-LocalGroupMember
 	* Требуется? да
 	* Позиция? named
 	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[DirectoryEntry[]] ADSIMember`
+	Объект безопасности ADSI для добавления в группу
+	* Тип: System.DirectoryServices.DirectoryEntry[]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[Array] OtherMember`
+	Объект безопасности в любом из трёх выше указанных типов для добавления в группу
+	Использовать данный параметр стоит только для обеспечения совместимости при переходе
+	от использования одного набора классов к другому.
+	* Тип: [System.Array][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? false
 	* Принимать подстановочные знаки? нет
 
 - `[SwitchParameter] PassThru`
@@ -508,6 +539,10 @@ Remove-LocalGroupMember
 
 	Remove-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-WhatIf] [-Confirm] <CommonParameters>
 
+	Remove-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-WhatIf] [-Confirm] <CommonParameters>
+
 ##### ВХОДНЫЕ ДАННЫЕ
 
 - System.DirectoryServices.AccountManagement.Principal
@@ -545,6 +580,24 @@ Remove-LocalGroupMember
 	* Принимать входные данные конвейера? true (ByValue)
 	* Принимать подстановочные знаки? нет
 
+- `[DirectoryEntry[]] ADSIMember`
+	Объект безопасности ADSI для добавления в группу
+	* Тип: System.DirectoryServices.DirectoryEntry[]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[Array] OtherMember`
+	Объект безопасности в любом из трёх выше указанных типов для добавления в группу
+	Использовать данный параметр стоит только для обеспечения совместимости при переходе
+	от использования одного набора классов к другому.
+	* Тип: [System.Array][]
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? false
+	* Принимать подстановочные знаки? нет
+
 - `[SwitchParameter] WhatIf`
 	* Псевдонимы: wi
 
@@ -562,7 +615,7 @@ Remove-LocalGroupMember
 
 1. Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
 
-		Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи );
+		Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Verbose;
 
 ##### ССЫЛКИ ПО ТЕМЕ
 
@@ -660,6 +713,7 @@ Test-LocalGroupMember
 [New-Group]: <#new-group> "Создаёт локальную группу безопасности."
 [Remove-Group]: <#remove-group> "Удаляет локальную группу безопасности."
 [Remove-GroupMember]: <#remove-groupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
+[System.Array]: <http://msdn.microsoft.com/ru-ru/library/system.array.aspx> "Array Class (System)"
 [System.Object]: <http://msdn.microsoft.com/ru-ru/library/system.object.aspx> "Object Class (System)"
 [System.Security.Principal.SecurityIdentifier]: <http://msdn.microsoft.com/ru-ru/library/system.security.principal.securityidentifier.aspx> "SecurityIdentifier Class (System.Security.Principal)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"

@@ -61,6 +61,10 @@
 
 	Add-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
+	Add-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Add-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
 #### КРАТКОЕ ОПИСАНИЕ [Get-GroupMember][]
 
 Возвращает членов локальной группы безопасности.
@@ -74,6 +78,10 @@
 	Remove-GroupMember [-Group] <GroupPrincipal> -Member <Principal[]> [-WhatIf] [-Confirm] <CommonParameters>
 
 	Remove-GroupMember [-Group] <GroupPrincipal> -ADMember <ADAccount[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -ADSIMember <DirectoryEntry[]> [-WhatIf] [-Confirm] <CommonParameters>
+
+	Remove-GroupMember [-Group] <GroupPrincipal> -OtherMember <Array> [-WhatIf] [-Confirm] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [Test-GroupMember][]
 

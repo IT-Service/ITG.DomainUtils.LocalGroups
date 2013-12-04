@@ -58,6 +58,46 @@
 					<maml:name>Confirm</maml:name>
 				</parameter>
 			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Add-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ADSIMember</maml:name>
+					<parameterValue required="true">DirectoryEntry[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Add-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="false" globbing="false">
+					<maml:name>OtherMember</maml:name>
+					<parameterValue required="true">Array</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
 		</syntax>
 		<parameters>
 			<parameter required="true" position="2" pipelineInput="false" globbing="false">
@@ -80,6 +120,20 @@
 					<maml:para>Объект безопасности AD для добавления в группу</maml:para>
 				</maml:description>
 				<parameterValue required="True">ADAccount[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ADSIMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности ADSI для добавления в группу</maml:para>
+				</maml:description>
+				<parameterValue required="True">DirectoryEntry[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="false" globbing="false">
+				<maml:name>OtherMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности в любом из трёх выше указанных типов для добавления в группу Использовать данный параметр стоит только для обеспечения совместимости при переходе от использования одного набора классов к другому.</maml:para>
+				</maml:description>
+				<parameterValue required="True">Array</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>PassThru</maml:name>
@@ -119,6 +173,17 @@
 				</dev:type>
 				<maml:description>
 					<maml:para>Учётные записи AD, которые необходимо включить в локальную группу безопасности.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:description>
+						<maml:para>Учётные записи и группы ADSI, которые необходимо включить в локальную группу безопасности.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Учётные записи и группы ADSI, которые необходимо включить в локальную группу безопасности.</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>
@@ -648,6 +713,40 @@
 					<maml:name>Confirm</maml:name>
 				</parameter>
 			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Remove-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>ADSIMember</maml:name>
+					<parameterValue required="true">DirectoryEntry[]</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Remove-GroupMember</maml:name>
+				<parameter required="true" position="2" pipelineInput="false" globbing="false">
+					<maml:name>Group</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="named" pipelineInput="false" globbing="false">
+					<maml:name>OtherMember</maml:name>
+					<parameterValue required="true">Array</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
 		</syntax>
 		<parameters>
 			<parameter required="true" position="2" pipelineInput="false" globbing="false">
@@ -670,6 +769,20 @@
 					<maml:para>Объект безопасности AD для удаления из группы</maml:para>
 				</maml:description>
 				<parameterValue required="True">ADAccount[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>ADSIMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности ADSI для добавления в группу</maml:para>
+				</maml:description>
+				<parameterValue required="True">DirectoryEntry[]</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="false" globbing="false">
+				<maml:name>OtherMember</maml:name>
+				<maml:description>
+					<maml:para>Объект безопасности в любом из трёх выше указанных типов для добавления в группу Использовать данный параметр стоит только для обеспечения совместимости при переходе от использования одного набора классов к другому.</maml:para>
+				</maml:description>
+				<parameterValue required="True">Array</parameterValue>
 			</parameter>
 			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>WhatIf</maml:name>
@@ -721,7 +834,7 @@
 				<maml:introduction>
 					<maml:paragraph>C:\PS&gt;</maml:paragraph>
 				</maml:introduction>
-				<dev:code>Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи );</dev:code>
+				<dev:code>Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи ) -Verbose;</dev:code>
 				<maml:remarks>
 					<maml:para>Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".</maml:para>
 				</maml:remarks>
