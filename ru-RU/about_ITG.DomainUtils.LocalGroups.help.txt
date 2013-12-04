@@ -21,7 +21,7 @@
 
 Возвращает локальную группу безопасности.
 
-	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
+	Get-Group -Sid <Object> <CommonParameters>
 
 	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
 

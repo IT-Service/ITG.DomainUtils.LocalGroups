@@ -96,6 +96,9 @@ Function Get-Group {
 .Inputs
 	System.DirectoryServices.AccountManagement.GroupPrincipal
 	ќбъект, определ€ющий параметры поиска.
+.Inputs
+	System.DirectoryServices.DirectoryEntry
+	ќбъект ADSI, дл€ которого необходимо получить представление в классе System.DirectoryServices.AccountManagement.GroupPrincipal
 .Outputs
 	System.DirectoryServices.AccountManagement.GroupPrincipal
 	ќбъект, представл€ющий группу безопасности.
@@ -150,7 +153,8 @@ Function Get-Group {
 			, ValueFromPipelineByPropertyName = $true
 			, ParameterSetName = 'Sid'
 		)]
-		[System.Security.Principal.SecurityIdentifier]
+		## [System.Security.Principal.SecurityIdentifier]
+		[Alias( 'objectSid' )]
 		$Sid
 	)
 
@@ -195,6 +199,30 @@ Function Get-Group {
 					$Groups = @( $Searcher.FindAll() );
 					if ( $Groups ) {
 						return $Groups;
+					} else {
+						Write-Error `
+							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
+							-Category ObjectNotFound `
+						;
+					};
+					break;
+				}
+				'Sid' {
+					if ( $Sid -is [System.Security.Principal.SecurityIdentifier] ) {
+						[System.Security.Principal.SecurityIdentifier] $SecurityIdentifier = $Sid;
+					} else {
+						[System.Security.Principal.SecurityIdentifier] $SecurityIdentifier = New-Object `
+							-Type System.Security.Principal.SecurityIdentifier `
+							-ArgumentList ( [Byte[]] $Sid[0] ), 0 `
+						;
+					};
+					$Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity(
+						$ComputerContext
+						, ( [System.DirectoryServices.AccountManagement.IdentityType]::Sid )
+						, $SecurityIdentifier
+					);
+					if ( $Group.SamAccountName ) {
+						return $Group;
 					} else {
 						Write-Error `
 							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `

@@ -236,7 +236,7 @@
 				<maml:name>Get-Group</maml:name>
 				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 					<maml:name>Sid</maml:name>
-					<parameterValue required="true">SecurityIdentifier</parameterValue>
+					<parameterValue required="true">Object</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
@@ -284,9 +284,9 @@
 			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 				<maml:name>Sid</maml:name>
 				<maml:description>
-					<maml:para>Идентификатор безопасности искомой группы безопасности</maml:para>
+					<maml:para>Идентификатор безопасности искомой группы безопасности [System.Security.Principal.SecurityIdentifier]</maml:para>
 				</maml:description>
-				<parameterValue required="True">SecurityIdentifier</parameterValue>
+				<parameterValue required="True">Object</parameterValue>
 			</parameter>
 		</parameters>
 		<inputTypes>
@@ -299,6 +299,17 @@
 				</dev:type>
 				<maml:description>
 					<maml:para>Объект, определяющий параметры поиска.</maml:para>
+				</maml:description>
+			</inputType>
+			<inputType>
+				<dev:type>
+					<maml:name>System.DirectoryServices.DirectoryEntry</maml:name>
+					<maml:description>
+						<maml:para>Объект ADSI, для которого необходимо получить представление в классе System.DirectoryServices.AccountManagement.GroupPrincipal</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Объект ADSI, для которого необходимо получить представление в классе System.DirectoryServices.AccountManagement.GroupPrincipal</maml:para>
 				</maml:description>
 			</inputType>
 		</inputTypes>

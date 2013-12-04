@@ -21,7 +21,7 @@
 
 Возвращает локальную группу безопасности.
 
-	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
+	Get-Group -Sid <Object> <CommonParameters>
 
 	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
 
@@ -118,7 +118,7 @@ Get-LocalGroup
 
 ##### СИНТАКСИС
 
-	Get-Group -Sid <SecurityIdentifier> <CommonParameters>
+	Get-Group -Sid <Object> <CommonParameters>
 
 	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
 
@@ -128,6 +128,8 @@ Get-LocalGroup
 
 - System.DirectoryServices.AccountManagement.GroupPrincipal
 Объект, определяющий параметры поиска.
+- System.DirectoryServices.DirectoryEntry
+Объект ADSI, для которого необходимо получить представление в классе System.DirectoryServices.AccountManagement.GroupPrincipal
 
 ##### ВЫХОДНЫЕ ДАННЫЕ
 
@@ -161,9 +163,11 @@ Get-LocalGroup
 	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
 
-- `[SecurityIdentifier] Sid`
+- `[Object] Sid`
 	Идентификатор безопасности искомой группы безопасности
-	* Тип: [System.Security.Principal.SecurityIdentifier][]
+	[[System.Security.Principal.SecurityIdentifier][]]
+	* Тип: [System.Object][]
+	* Псевдонимы: objectSid
 	* Требуется? да
 	* Позиция? named
 	* Принимать входные данные конвейера? true (ByPropertyName)
@@ -842,6 +846,7 @@ Test-LocalGroupMember
 [Remove-GroupMember]: <#remove-groupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
 [Rename-Group]: <#rename-group> "Переименовывает локальную группу безопасности."
 [System.Array]: <http://msdn.microsoft.com/ru-ru/library/system.array.aspx> "Array Class (System)"
+[System.Object]: <http://msdn.microsoft.com/ru-ru/library/system.object.aspx> "Object Class (System)"
 [System.Security.Principal.SecurityIdentifier]: <http://msdn.microsoft.com/ru-ru/library/system.security.principal.securityidentifier.aspx> "SecurityIdentifier Class (System.Security.Principal)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"
 [Test-Group]: <#test-group> "Проверяет наличие локальной группы безопасности."
