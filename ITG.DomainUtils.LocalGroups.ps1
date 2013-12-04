@@ -123,7 +123,6 @@ Function Get-Group {
 		# Идентификатор группы безопасности
 		[Parameter(
 			Mandatory = $false
-			, Position = 1
 			, ParameterSetName = 'CustomSearch'
 		)]
 		[String]
@@ -141,6 +140,7 @@ Function Get-Group {
 		# Идентификатор группы безопасности
 		[Parameter(
 			Mandatory = $false
+			, Position = 1
 			, ValueFromPipelineByPropertyName = $true
 			, ParameterSetName = 'Name'
 		)]
@@ -201,7 +201,7 @@ Function Get-Group {
 						return $Groups;
 					} else {
 						Write-Error `
-							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
+							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Filter ) ) `
 							-Category ObjectNotFound `
 						;
 					};
@@ -225,7 +225,7 @@ Function Get-Group {
 						return $Group;
 					} else {
 						Write-Error `
-							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
+							-Message ( [String]::Format( $loc.LocalGroupNotFound, $SecurityIdentifier ) ) `
 							-Category ObjectNotFound `
 						;
 					};
@@ -241,7 +241,7 @@ Function Get-Group {
 						return $Group;
 					} else {
 						Write-Error `
-							-Message ( [String]::Format( $loc.LocalGroupNotFound, $Name ) ) `
+							-Message ( [String]::Format( $loc.LocalGroupNotFound, ( $PSBoundParameters.( $PsCmdlet.ParameterSetName ) ) ) ) `
 							-Category ObjectNotFound `
 						;
 					};
@@ -384,7 +384,8 @@ Function Remove-Group {
 			, ValueFromPipelineByPropertyName = $true
 			, ParameterSetName = 'Sid'
 		)]
-		[System.Security.Principal.SecurityIdentifier]
+		## [System.Security.Principal.SecurityIdentifier]
+		[Alias( 'objectSid' )]
 		$Sid
 	,
 		# Группа безопасности к удалению
@@ -479,6 +480,16 @@ Function Rename-Group {
 		[String]
 		$Name
 	,
+		# Идентификатор безопасности искомой группы безопасности для переименования
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Sid'
+		)]
+		## [System.Security.Principal.SecurityIdentifier]
+		[Alias( 'objectSid' )]
+		$Sid
+	,
 		# Группа безопасности к переименованию
 		[Parameter(
 			Mandatory = $true
@@ -516,9 +527,11 @@ Function Rename-Group {
 					if ( $PassThru ) { return $Identity; };
 					break;
 				}
-				'Name' {
+				default {
+					$Params = @{};
+					$Params.Add( $PsCmdlet.ParameterSetName, $PSBoundParameters.( $PsCmdlet.ParameterSetName ) );
 					Get-Group `
-						-Name $Name `
+						@Params `
 						-Verbose:$VerbosePreference `
 					| Rename-Group `
 						-NewName $NewName `

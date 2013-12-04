@@ -23,9 +23,9 @@
 
 	Get-Group -Sid <Object> <CommonParameters>
 
-	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
+	Get-Group [-Filter <String>] [-Description <String>] <CommonParameters>
 
-	Get-Group [-Name <String>] <CommonParameters>
+	Get-Group [[-Name] <String>] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [New-Group][]
 
@@ -37,7 +37,7 @@
 
 Удаляет локальную группу безопасности.
 
-	Remove-Group -Sid <SecurityIdentifier> [-WhatIf] [-Confirm] <CommonParameters>
+	Remove-Group -Sid <Object> [-WhatIf] [-Confirm] <CommonParameters>
 
 	Remove-Group [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
 
@@ -50,6 +50,8 @@
 	Rename-Group -Identity <GroupPrincipal> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 	Rename-Group [-Name] <String> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Rename-Group -Sid <Object> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [Test-Group][]
 
@@ -120,9 +122,9 @@ Get-LocalGroup
 
 	Get-Group -Sid <Object> <CommonParameters>
 
-	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
+	Get-Group [-Filter <String>] [-Description <String>] <CommonParameters>
 
-	Get-Group [-Name <String>] <CommonParameters>
+	Get-Group [[-Name] <String>] <CommonParameters>
 
 ##### ВХОДНЫЕ ДАННЫЕ
 
@@ -142,7 +144,7 @@ Get-LocalGroup
 	Идентификатор группы безопасности
 	* Тип: [System.String][]
 	* Требуется? нет
-	* Позиция? 2
+	* Позиция? named
 	* Значение по умолчанию `*`
 	* Принимать входные данные конвейера? false
 	* Принимать подстановочные знаки? нет
@@ -159,7 +161,7 @@ Get-LocalGroup
 	Идентификатор группы безопасности
 	* Тип: [System.String][]
 	* Требуется? нет
-	* Позиция? named
+	* Позиция? 2
 	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
 
@@ -271,7 +273,7 @@ Remove-LocalGroup
 
 ##### СИНТАКСИС
 
-	Remove-Group -Sid <SecurityIdentifier> [-WhatIf] [-Confirm] <CommonParameters>
+	Remove-Group -Sid <Object> [-WhatIf] [-Confirm] <CommonParameters>
 
 	Remove-Group [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
 
@@ -292,9 +294,11 @@ Remove-LocalGroup
 	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
 
-- `[SecurityIdentifier] Sid`
+- `[Object] Sid`
 	Идентификатор безопасности искомой группы безопасности
-	* Тип: [System.Security.Principal.SecurityIdentifier][]
+	[[System.Security.Principal.SecurityIdentifier][]]
+	* Тип: [System.Object][]
+	* Псевдонимы: objectSid
 	* Требуется? да
 	* Позиция? named
 	* Принимать входные данные конвейера? true (ByPropertyName)
@@ -346,6 +350,8 @@ Rename-LocalGroup
 
 	Rename-Group [-Name] <String> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
+	Rename-Group -Sid <Object> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
 ##### ВХОДНЫЕ ДАННЫЕ
 
 - System.DirectoryServices.AccountManagement.GroupPrincipal
@@ -358,6 +364,16 @@ Rename-LocalGroup
 	* Тип: [System.String][]
 	* Требуется? да
 	* Позиция? 2
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[Object] Sid`
+	Идентификатор безопасности искомой группы безопасности для переименования
+	[[System.Security.Principal.SecurityIdentifier][]]
+	* Тип: [System.Object][]
+	* Псевдонимы: objectSid
+	* Требуется? да
+	* Позиция? named
 	* Принимать входные данные конвейера? true (ByPropertyName)
 	* Принимать подстановочные знаки? нет
 

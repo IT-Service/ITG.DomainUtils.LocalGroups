@@ -23,9 +23,9 @@
 
 	Get-Group -Sid <Object> <CommonParameters>
 
-	Get-Group [[-Filter] <String>] [-Description <String>] <CommonParameters>
+	Get-Group [-Filter <String>] [-Description <String>] <CommonParameters>
 
-	Get-Group [-Name <String>] <CommonParameters>
+	Get-Group [[-Name] <String>] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [New-Group][]
 
@@ -37,7 +37,7 @@
 
 Удаляет локальную группу безопасности.
 
-	Remove-Group -Sid <SecurityIdentifier> [-WhatIf] [-Confirm] <CommonParameters>
+	Remove-Group -Sid <Object> [-WhatIf] [-Confirm] <CommonParameters>
 
 	Remove-Group [-Name] <String> [-WhatIf] [-Confirm] <CommonParameters>
 
@@ -50,6 +50,8 @@
 	Rename-Group -Identity <GroupPrincipal> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 	Rename-Group [-Name] <String> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Rename-Group -Sid <Object> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
 
 #### КРАТКОЕ ОПИСАНИЕ [Test-Group][]
 

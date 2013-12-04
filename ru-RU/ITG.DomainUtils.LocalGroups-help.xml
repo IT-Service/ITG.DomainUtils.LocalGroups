@@ -241,7 +241,7 @@
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Get-Group</maml:name>
-				<parameter required="false" position="2" pipelineInput="false" globbing="false">
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>Filter</maml:name>
 					<parameterValue required="false">String</parameterValue>
 				</parameter>
@@ -252,14 +252,14 @@
 			</syntaxItem>
 			<syntaxItem>
 				<maml:name>Get-Group</maml:name>
-				<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+				<parameter required="false" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
 					<maml:name>Name</maml:name>
 					<parameterValue required="false">String</parameterValue>
 				</parameter>
 			</syntaxItem>
 		</syntax>
 		<parameters>
-			<parameter required="false" position="2" pipelineInput="false" globbing="false">
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
 				<maml:name>Filter</maml:name>
 				<maml:description>
 					<maml:para>Идентификатор группы безопасности</maml:para>
@@ -274,7 +274,7 @@
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
 			</parameter>
-			<parameter required="false" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+			<parameter required="false" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
 				<maml:name>Name</maml:name>
 				<maml:description>
 					<maml:para>Идентификатор группы безопасности</maml:para>
@@ -575,7 +575,7 @@
 				<maml:name>Remove-Group</maml:name>
 				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 					<maml:name>Sid</maml:name>
-					<parameterValue required="true">SecurityIdentifier</parameterValue>
+					<parameterValue required="true">Object</parameterValue>
 				</parameter>
 				<parameter required="false" position="named" pipelineInput="false" globbing="false">
 					<maml:name>WhatIf</maml:name>
@@ -622,9 +622,9 @@
 			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 				<maml:name>Sid</maml:name>
 				<maml:description>
-					<maml:para>Идентификатор безопасности искомой группы безопасности</maml:para>
+					<maml:para>Идентификатор безопасности искомой группы безопасности [System.Security.Principal.SecurityIdentifier]</maml:para>
 				</maml:description>
-				<parameterValue required="True">SecurityIdentifier</parameterValue>
+				<parameterValue required="True">Object</parameterValue>
 			</parameter>
 			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>Identity</maml:name>
@@ -924,6 +924,26 @@
 					<maml:name>Confirm</maml:name>
 				</parameter>
 			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Rename-Group</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+					<maml:name>Sid</maml:name>
+					<parameterValue required="true">Object</parameterValue>
+				</parameter>
+				<parameter required="true" position="3" pipelineInput="false" globbing="false">
+					<maml:name>NewName</maml:name>
+					<parameterValue required="true">String</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
 		</syntax>
 		<parameters>
 			<parameter required="true" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
@@ -932,6 +952,13 @@
 					<maml:para>Идентификатор группы безопасности к переименованию</maml:para>
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
+				<maml:name>Sid</maml:name>
+				<maml:description>
+					<maml:para>Идентификатор безопасности искомой группы безопасности для переименования [System.Security.Principal.SecurityIdentifier]</maml:para>
+				</maml:description>
+				<parameterValue required="True">Object</parameterValue>
 			</parameter>
 			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>Identity</maml:name>
