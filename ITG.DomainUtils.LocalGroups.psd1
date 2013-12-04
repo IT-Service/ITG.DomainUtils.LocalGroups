@@ -99,6 +99,7 @@ FileList = `
 	'ITG.DomainUtils.LocalGroups.psm1' `
 ,   'ITG.DomainUtils.LocalGroups.psd1' `
 ,	'ITG.DomainUtils.LocalGroups.ps1' `
+,	'ITG.DomainUtils.NameConvertors.ps1' `
 ;
 
 # Личные данные, передаваемые в модуль, указанный в параметре ModuleToProcess

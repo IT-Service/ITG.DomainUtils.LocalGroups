@@ -593,7 +593,7 @@ Function Add-GroupMember {
 #>
 	[CmdletBinding(
 		SupportsShouldProcess = $true
-		, ConfirmImpact = 'Medium'
+		, ConfirmImpact = 'Low'
 		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-GroupMember'
 	)]
 
@@ -632,9 +632,7 @@ Function Add-GroupMember {
 
 	begin {
 		try {
-			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
-				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
-			;
+			[System.DirectoryServices.DirectoryEntry] $ADSIGroup = $Group.GetUnderlyingObject();
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -647,15 +645,14 @@ Function Add-GroupMember {
 				'Member' {
 					$Member `
 					| % {
-						$Group.Members.Add( $_ );
 						if ( $PSCmdlet.ShouldProcess( "$( $_.Name ) => $( $Group.Name )" ) ) {
+							$Group.Members.Add( $_ );
 							$Group.Save();
 						};
 					};
 					break;
 				}
 				'ADMember' {
-					[System.DirectoryServices.DirectoryEntry] $ADSIGroup = $Group.GetUnderlyingObject();
 					$ADMember `
 					| ConvertTo-ADSIPath `
 					| % {
@@ -677,7 +674,7 @@ Function Add-GroupMember {
 
 New-Alias -Name Add-LocalGroupMember -Value Add-GroupMember -Force;
 
-Function Remove-LocalGroupMember {
+Function Remove-GroupMember {
 <#
 .Synopsis
 	Удаляет учётные записи и/или группы из указанной локальной группы безопасности. 
@@ -687,24 +684,25 @@ Function Remove-LocalGroupMember {
 	учётные записи / группы, так и доменные учётные записи / группы (`Get-ADUser`,
 	`Get-ADGroup`).
 .Inputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.Principal
 	Учётные записи и группы, которые необходимо удалить из указанной группы.
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADUser
-	Учётные записи AD, которые необходимо удалить из указанной группы.
+	Microsoft.ActiveDirectory.Management.ADAccount
+	Учётные записи AD, которые необходимо удалить из указанной группы (полученные
+	через `Get-ADUser`, `Get-ADGroup`).
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADGroup
-	Группы AD, которые необходимо удалить из указанной группы.
+	System.DirectoryServices.DirectoryEntry
+	Учётные записи и группы, которые необходимо удалить из указанной группы.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-GroupMember
 .Example
-	Get-ADUser 'admin-sergey.s.betke' | Remove-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );
+	Get-ADUser 'admin-sergey.s.betke' | Remove-GroupMember -Group ( Get-LocalGroup -Name Пользователи );
 	Удаляем указанного пользователя домена из локальной группы безопасности	"Пользователи".
 #>
 	[CmdletBinding(
 		SupportsShouldProcess = $true
-		, ConfirmImpact = 'High'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-LocalGroupMember'
+		, ConfirmImpact = 'Medium'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-GroupMember'
 	)]
 
 	param (
@@ -712,36 +710,63 @@ Function Remove-LocalGroupMember {
 		[Parameter(
 			Mandatory = $true
 			, Position = 1
-			, ValueFromPipeline = $false
 		)]
-		[System.DirectoryServices.DirectoryEntry]
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
 		$Group
 	,
 		# Объект безопасности для удаления из группы
 		[Parameter(
 			Mandatory = $true
-			, Position = 2
 			, ValueFromPipeline = $true
+			, ParameterSetName = 'Member'
 		)]
-		[Alias( 'Member' )]
+		[System.DirectoryServices.AccountManagement.Principal[]]
 		[Alias( 'User' )]
-		$Identity
+		$Member
 	,
-		# Передавать ли учётную запись далее по конвейеру
-		[Switch]
-		$PassThru
+		# Объект безопасности AD для удаления из группы
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADMember'
+		)]
+		[Microsoft.ActiveDirectory.Management.ADAccount[]]
+		$ADMember
 	)
 
+	begin {
+		try {
+			[System.DirectoryServices.DirectoryEntry] $ADSIGroup = $Group.GetUnderlyingObject();
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+	}
 	process {
 		try {
-			$Identity `
-			| ConvertTo-ADSIPath `
-			| % {
-				if ( $PSCmdlet.ShouldProcess( "$_ => $( $Group.Path )" ) ) {
-					$Group.PSBase.Invoke( 'Remove', $_ );
-				};
+   			switch ( $PsCmdlet.ParameterSetName ) {
+				'Member' {
+					$Member `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_.Name ) => $( $Group.Name )" ) ) {
+							$Group.Members.Remove( $_ );
+							$Group.Save();
+						};
+					};
+					break;
+				}
+				'ADMember' {
+					$ADMember `
+					| ConvertTo-ADSIPath `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_ ) => $( $Group.Name )" ) ) {
+							$ADSIGroup.PSBase.Invoke( 'Remove', $_ );
+						};
+					};
+					break;
+				}
 			};
-			if ( $PassThru ) { return $input; };
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -749,3 +774,5 @@ Function Remove-LocalGroupMember {
 		};
 	}
 }
+
+New-Alias -Name Remove-LocalGroupMember -Value Remove-GroupMember -Force;
