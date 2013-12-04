@@ -499,6 +499,7 @@ Function Test-GroupMember {
 		# Группа безопасности
 		[Parameter(
 			Mandatory = $true
+			, Position = 1
 		)]
 		[System.DirectoryServices.AccountManagement.GroupPrincipal]
 		$Group
@@ -510,7 +511,7 @@ Function Test-GroupMember {
 			, ValueFromPipelineByPropertyName = $true
 			, ParameterSetName = 'Sid'
 		)]
-		[System.Security.Principal.SecurityIdentifier]
+		[System.Security.Principal.SecurityIdentifier[]]
 		$Sid
 	,
 		# Объект безопасности для проверки членства в указанной группе.
@@ -538,7 +539,10 @@ Function Test-GroupMember {
 		try {
    			switch ( $PsCmdlet.ParameterSetName ) {
 				'Sid' {
-					$MembersSids -contains $Sid;
+					$Sid `
+					| % {
+						$MembersSids -contains $_;
+					};
 					break;
 				}
 				'Member' {
@@ -561,7 +565,7 @@ Function Test-GroupMember {
 
 New-Alias -Name Test-LocalGroupMember -Value Test-GroupMember -Force;
 
-Function Add-LocalGroupMember {
+Function Add-GroupMember {
 <#
 .Synopsis
 	Добавляет учётные записи и/или группы в указанную локальную группу безопасности. 
@@ -571,25 +575,26 @@ Function Add-LocalGroupMember {
 	учётные записи / группы, так и доменные учётные записи / группы (`Get-ADUser`,
 	`Get-ADGroup`).
 .Inputs
-	System.DirectoryServices.DirectoryEntry
+	System.DirectoryServices.AccountManagement.Principal
 	Учётные записи и группы, которые необходимо включить в локальную группу безопасности.
 .Inputs
-	Microsoft.ActiveDirectory.Management.ADUser
+	Microsoft.ActiveDirectory.Management.ADAccount
 	Учётные записи AD, которые необходимо включить в локальную группу безопасности.
-.Inputs
-	Microsoft.ActiveDirectory.Management.ADGroup
-	Группы AD, которые необходимо включить в локальную группу безопасности.
 .Link
-	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-GroupMember
 .Example
-	Get-ADUser 'admin-sergey.s.betke' | Add-LocalGroupMember -Group ( Get-LocalGroup -Name Пользователи );
+	Get-ADUser 'admin-sergey.s.betke' | Add-GroupMember -Group ( Get-Group -Name Пользователи );
 	Добавляем указанного пользователя домена в локальную группы безопасности
+	"Пользователи".
+.Example
+	Get-ADGroup 'Администраторы' | Add-GroupMember -Group ( Get-Group -Name Пользователи );
+	Добавляем указанного локального пользователя в локальную группы безопасности
 	"Пользователи".
 #>
 	[CmdletBinding(
 		SupportsShouldProcess = $true
 		, ConfirmImpact = 'Medium'
-		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-LocalGroupMember'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Add-GroupMember'
 	)]
 
 	param (
@@ -597,36 +602,71 @@ Function Add-LocalGroupMember {
 		[Parameter(
 			Mandatory = $true
 			, Position = 1
-			, ValueFromPipeline = $false
 		)]
-		[System.DirectoryServices.DirectoryEntry]
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
 		$Group
 	,
 		# Объект безопасности для добавления в группу
 		[Parameter(
 			Mandatory = $true
-			, Position = 2
 			, ValueFromPipeline = $true
+			, ParameterSetName = 'Member'
 		)]
-		[Alias( 'Member' )]
+		[System.DirectoryServices.AccountManagement.Principal[]]
 		[Alias( 'User' )]
-		$Identity
+		$Member
+	,
+		# Объект безопасности AD для добавления в группу
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'ADMember'
+		)]
+		[Microsoft.ActiveDirectory.Management.ADAccount[]]
+		$ADMember
 	,
 		# Передавать ли учётную запись далее по конвейеру
 		[Switch]
 		$PassThru
 	)
 
+	begin {
+		try {
+			$ComputerContext = New-Object -Type System.DirectoryServices.AccountManagement.PrincipalContext `
+				-ArgumentList ( [System.DirectoryServices.AccountManagement.ContextType]::Machine )  `
+			;
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+	}
 	process {
 		try {
-			$Identity `
-			| ConvertTo-ADSIPath `
-			| % {
-				if ( $PSCmdlet.ShouldProcess( "$_ => $( $Group.Path )" ) ) {
-					$Group.PSBase.Invoke( 'Add', $_ );
-				};
+   			switch ( $PsCmdlet.ParameterSetName ) {
+				'Member' {
+					$Member `
+					| % {
+						$Group.Members.Add( $_ );
+						if ( $PSCmdlet.ShouldProcess( "$( $_.Name ) => $( $Group.Name )" ) ) {
+							$Group.Save();
+						};
+					};
+					break;
+				}
+				'ADMember' {
+					[System.DirectoryServices.DirectoryEntry] $ADSIGroup = $Group.GetUnderlyingObject();
+					$ADMember `
+					| ConvertTo-ADSIPath `
+					| % {
+						if ( $PSCmdlet.ShouldProcess( "$( $_ ) => $( $Group.Name )" ) ) {
+							$ADSIGroup.PSBase.Invoke( 'Add', $_ );
+						};
+					};
+					break;
+				}
 			};
-			if ( $PassThru ) { return $Identity; };
+			if ( $PassThru ) { return $input; };
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `
@@ -634,6 +674,8 @@ Function Add-LocalGroupMember {
 		};
 	}
 }
+
+New-Alias -Name Add-LocalGroupMember -Value Add-GroupMember -Force;
 
 Function Remove-LocalGroupMember {
 <#
@@ -699,7 +741,7 @@ Function Remove-LocalGroupMember {
 					$Group.PSBase.Invoke( 'Remove', $_ );
 				};
 			};
-			if ( $PassThru ) { return $Identity; };
+			if ( $PassThru ) { return $input; };
 		} catch {
 			Write-Error `
 				-ErrorRecord $_ `

@@ -16,7 +16,7 @@ Export-ModuleMember -Function Remove-Group -Alias Remove-LocalGroup;
 
 Export-ModuleMember -Function Get-GroupMember -Alias Get-LocalGroupMember;
 Export-ModuleMember -Function Test-GroupMember -Alias Test-LocalGroupMember;
-Export-ModuleMember -Function Add-LocalGroupMember;
+Export-ModuleMember -Function Add-GroupMember -Alias Add-LocalGroupMember;
 Export-ModuleMember -Function Remove-LocalGroupMember;
 
 Export-ModuleMember -Function ConvertTo-ADSIPath;
