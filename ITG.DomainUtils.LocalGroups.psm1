@@ -13,6 +13,7 @@ Export-ModuleMember -Function New-Group -Alias New-LocalGroup;
 Export-ModuleMember -Function Get-Group -Alias Get-LocalGroup;
 Export-ModuleMember -Function Test-Group -Alias Test-LocalGroup;
 Export-ModuleMember -Function Remove-Group -Alias Remove-LocalGroup;
+Export-ModuleMember -Function Rename-Group -Alias Rename-LocalGroup;
 
 Export-ModuleMember -Function Get-GroupMember -Alias Get-LocalGroupMember;
 Export-ModuleMember -Function Test-GroupMember -Alias Test-LocalGroupMember;

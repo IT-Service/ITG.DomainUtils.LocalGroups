@@ -858,6 +858,154 @@
 	</command>
 	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
 		<details>
+			<name>Rename-Group</name>
+			<verb>Rename</verb>
+			<noun>Group</noun>
+			<maml:description>
+				<maml:para>Переименовывает локальную группу безопасности.</maml:para>
+			</maml:description>
+			<maml:copyright>
+				<maml:para>(c) 2013 Sergey S. Betke. All rights reserved.</maml:para>
+			</maml:copyright>
+			<dev:version>2.0.0</dev:version>
+		</details>
+		<maml:description>
+			<maml:para>Rename-Group переименовывает локальную группу безопасности, переданную по конвейеру.</maml:para>
+		</maml:description>
+		<syntax>
+			<syntaxItem>
+				<maml:name>Rename-Group</maml:name>
+				<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+					<maml:name>Identity</maml:name>
+					<parameterValue required="true">GroupPrincipal</parameterValue>
+				</parameter>
+				<parameter required="true" position="3" pipelineInput="false" globbing="false">
+					<maml:name>NewName</maml:name>
+					<parameterValue required="true">String</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+			<syntaxItem>
+				<maml:name>Rename-Group</maml:name>
+				<parameter required="true" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
+					<maml:name>Name</maml:name>
+					<parameterValue required="true">String</parameterValue>
+				</parameter>
+				<parameter required="true" position="3" pipelineInput="false" globbing="false">
+					<maml:name>NewName</maml:name>
+					<parameterValue required="true">String</parameterValue>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>PassThru</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>WhatIf</maml:name>
+				</parameter>
+				<parameter required="false" position="named" pipelineInput="false" globbing="false">
+					<maml:name>Confirm</maml:name>
+				</parameter>
+			</syntaxItem>
+		</syntax>
+		<parameters>
+			<parameter required="true" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
+				<maml:name>Name</maml:name>
+				<maml:description>
+					<maml:para>Идентификатор группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">String</parameterValue>
+			</parameter>
+			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
+				<maml:name>Identity</maml:name>
+				<maml:description>
+					<maml:para>Группа безопасности к удалению Идентификатор группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">GroupPrincipal</parameterValue>
+			</parameter>
+			<parameter required="true" position="3" pipelineInput="false" globbing="false">
+				<maml:name>NewName</maml:name>
+				<maml:description>
+					<maml:para>Новый идентификатор группы безопасности</maml:para>
+				</maml:description>
+				<parameterValue required="True">String</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>PassThru</maml:name>
+				<maml:description>
+					<maml:para>Передавать ли переименованные группы далее по конвейеру</maml:para>
+				</maml:description>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+				<defaultValue>False</defaultValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>WhatIf</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+			<parameter required="false" position="named" pipelineInput="false" globbing="false">
+				<maml:name>Confirm</maml:name>
+				<parameterValue required="True">SwitchParameter</parameterValue>
+			</parameter>
+		</parameters>
+		<inputTypes>
+			<inputType>
+				<dev:type>
+					<maml:name>System.DirectoryServices.AccountManagement.GroupPrincipal</maml:name>
+					<maml:description>
+						<maml:para>Группа безопасности, которую следует переименовать.</maml:para>
+					</maml:description>
+				</dev:type>
+				<maml:description>
+					<maml:para>Группа безопасности, которую следует переименовать.</maml:para>
+				</maml:description>
+			</inputType>
+		</inputTypes>
+		<examples>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 1 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Get-Group 'test' | Rename-Group -NewName 'test2' -Verbose;</dev:code>
+				<maml:remarks>
+					<maml:para>Переименуем группу 'test' в 'test2'.</maml:para>
+				</maml:remarks>
+			</example>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 2 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Rename-Group -Identity (Get-Group 'test') -NewName 'test2' -WhatIf;</dev:code>
+				<maml:remarks>
+					<maml:para>Переименуем группу 'test' в 'test2'.</maml:para>
+				</maml:remarks>
+			</example>
+			<example>
+				<maml:title>-------------------------- ПРИМЕР 3 --------------------------</maml:title>
+				<maml:introduction>
+					<maml:paragraph>C:\PS&gt;</maml:paragraph>
+				</maml:introduction>
+				<dev:code>Rename-Group 'test' 'test2' -Verbose;</dev:code>
+				<maml:remarks>
+					<maml:para>Переименуем группу 'test' в 'test2'.</maml:para>
+				</maml:remarks>
+			</example>
+		</examples>
+		<maml:relatedLinks>
+			<maml:navigationLink>
+				<maml:uri>https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Rename-Group</maml:uri>
+			</maml:navigationLink>
+		</maml:relatedLinks>
+	</command>
+	<command xmlns:msh="http://msh" xmlns="http://schemas.microsoft.com/maml/dev/command/2004/10">
+		<details>
 			<name>Test-Group</name>
 			<verb>Test</verb>
 			<noun>Group</noun>
