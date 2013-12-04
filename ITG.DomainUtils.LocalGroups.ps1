@@ -290,7 +290,8 @@ Function Test-Group {
 			, ValueFromPipelineByPropertyName = $true
 			, ParameterSetName = 'Sid'
 		)]
-		[System.Security.Principal.SecurityIdentifier]
+		## [System.Security.Principal.SecurityIdentifier]
+		[Alias( 'objectSid' )]
 		$Sid
 	)
 
@@ -308,6 +309,22 @@ Function Test-Group {
 	process {
 		try {
 			switch ( $PsCmdlet.ParameterSetName ) {
+				'Sid' {
+					if ( $Sid -is [System.Security.Principal.SecurityIdentifier] ) {
+						[System.Security.Principal.SecurityIdentifier] $SecurityIdentifier = $Sid;
+					} else {
+						[System.Security.Principal.SecurityIdentifier] $SecurityIdentifier = New-Object `
+							-Type System.Security.Principal.SecurityIdentifier `
+							-ArgumentList ( [Byte[]] $Sid[0] ), 0 `
+						;
+					};
+					$Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity(
+						$ComputerContext
+						, ( [System.DirectoryServices.AccountManagement.IdentityType]::Sid )
+						, $SecurityIdentifier
+					);
+					break;
+				}
 				default {
 					$Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity(
 						$ComputerContext

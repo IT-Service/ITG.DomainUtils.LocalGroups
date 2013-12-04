@@ -55,7 +55,7 @@
 
 Проверяет наличие локальной группы безопасности.
 
-	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
+	Test-Group -Sid <Object> <CommonParameters>
 
 	Test-Group [-Name] <String> <CommonParameters>
 
@@ -422,7 +422,7 @@ Test-LocalGroup
 
 ##### СИНТАКСИС
 
-	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
+	Test-Group -Sid <Object> <CommonParameters>
 
 	Test-Group [-Name] <String> <CommonParameters>
 
@@ -440,9 +440,11 @@ Test-LocalGroup
 	* Принимать входные данные конвейера? true (ByValue, ByPropertyName)
 	* Принимать подстановочные знаки? нет
 
-- `[SecurityIdentifier] Sid`
+- `[Object] Sid`
 	Идентификатор безопасности искомой группы безопасности
-	* Тип: [System.Security.Principal.SecurityIdentifier][]
+	[[System.Security.Principal.SecurityIdentifier][]]
+	* Тип: [System.Object][]
+	* Псевдонимы: objectSid
 	* Требуется? да
 	* Позиция? named
 	* Принимать входные данные конвейера? true (ByPropertyName)

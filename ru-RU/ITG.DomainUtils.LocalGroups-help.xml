@@ -1033,7 +1033,7 @@
 				<maml:name>Test-Group</maml:name>
 				<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 					<maml:name>Sid</maml:name>
-					<parameterValue required="true">SecurityIdentifier</parameterValue>
+					<parameterValue required="true">Object</parameterValue>
 				</parameter>
 			</syntaxItem>
 			<syntaxItem>
@@ -1055,9 +1055,9 @@
 			<parameter required="true" position="named" pipelineInput="true (ByPropertyName)" globbing="false">
 				<maml:name>Sid</maml:name>
 				<maml:description>
-					<maml:para>Идентификатор безопасности искомой группы безопасности</maml:para>
+					<maml:para>Идентификатор безопасности искомой группы безопасности [System.Security.Principal.SecurityIdentifier]</maml:para>
 				</maml:description>
-				<parameterValue required="True">SecurityIdentifier</parameterValue>
+				<parameterValue required="True">Object</parameterValue>
 			</parameter>
 		</parameters>
 		<returnValues>

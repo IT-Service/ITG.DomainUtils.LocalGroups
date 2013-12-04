@@ -55,7 +55,7 @@
 
 Проверяет наличие локальной группы безопасности.
 
-	Test-Group -Sid <SecurityIdentifier> <CommonParameters>
+	Test-Group -Sid <Object> <CommonParameters>
 
 	Test-Group [-Name] <String> <CommonParameters>
 
