@@ -918,14 +918,14 @@
 			<parameter required="true" position="2" pipelineInput="true (ByPropertyName)" globbing="false">
 				<maml:name>Name</maml:name>
 				<maml:description>
-					<maml:para>Идентификатор группы безопасности</maml:para>
+					<maml:para>Идентификатор группы безопасности к переименованию</maml:para>
 				</maml:description>
 				<parameterValue required="True">String</parameterValue>
 			</parameter>
 			<parameter required="true" position="named" pipelineInput="true (ByValue)" globbing="false">
 				<maml:name>Identity</maml:name>
 				<maml:description>
-					<maml:para>Группа безопасности к удалению Идентификатор группы безопасности</maml:para>
+					<maml:para>Группа безопасности к переименованию</maml:para>
 				</maml:description>
 				<parameterValue required="True">GroupPrincipal</parameterValue>
 			</parameter>

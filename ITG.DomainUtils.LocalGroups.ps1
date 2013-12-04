@@ -424,7 +424,7 @@ Function Rename-Group {
 	)]
 
 	param (
-		# Идентификатор группы безопасности
+		# Идентификатор группы безопасности к переименованию
 		[Parameter(
 			Mandatory = $true
 			, Position = 1
@@ -434,8 +434,7 @@ Function Rename-Group {
 		[String]
 		$Name
 	,
-		# Группа безопасности к удалению
-		# Идентификатор группы безопасности
+		# Группа безопасности к переименованию
 		[Parameter(
 			Mandatory = $true
 			, ValueFromPipeline = $true
