@@ -43,6 +43,14 @@
 
 	Remove-Group -Identity <GroupPrincipal> [-WhatIf] [-Confirm] <CommonParameters>
 
+#### КРАТКОЕ ОПИСАНИЕ [Rename-Group][]
+
+Переименовывает локальную группу безопасности.
+
+	Rename-Group -Identity <GroupPrincipal> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Rename-Group [-Name] <String> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
 #### КРАТКОЕ ОПИСАНИЕ [Test-Group][]
 
 Проверяет наличие локальной группы безопасности.
@@ -319,6 +327,87 @@ Remove-LocalGroup
 ##### ССЫЛКИ ПО ТЕМЕ
 
 - [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Remove-Group)
+
+#### Rename-Group
+
+[Rename-Group][] переименовывает локальную группу безопасности, переданную по конвейеру.
+
+##### ПСЕВДОНИМЫ
+
+Rename-LocalGroup
+
+##### СИНТАКСИС
+
+	Rename-Group -Identity <GroupPrincipal> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+	Rename-Group [-Name] <String> [-NewName] <String> [-PassThru] [-WhatIf] [-Confirm] <CommonParameters>
+
+##### ВХОДНЫЕ ДАННЫЕ
+
+- System.DirectoryServices.AccountManagement.GroupPrincipal
+Группа безопасности, которую следует переименовать.
+
+##### ПАРАМЕТРЫ
+
+- `[String] Name`
+	Идентификатор группы безопасности
+	* Тип: [System.String][]
+	* Требуется? да
+	* Позиция? 2
+	* Принимать входные данные конвейера? true (ByPropertyName)
+	* Принимать подстановочные знаки? нет
+
+- `[GroupPrincipal] Identity`
+	Группа безопасности к удалению
+	Идентификатор группы безопасности
+	* Тип: System.DirectoryServices.AccountManagement.GroupPrincipal
+	* Требуется? да
+	* Позиция? named
+	* Принимать входные данные конвейера? true (ByValue)
+	* Принимать подстановочные знаки? нет
+
+- `[String] NewName`
+	Новый идентификатор группы безопасности
+	* Тип: [System.String][]
+	* Требуется? да
+	* Позиция? 3
+	* Принимать входные данные конвейера? false
+	* Принимать подстановочные знаки? нет
+
+- `[SwitchParameter] PassThru`
+	Передавать ли переименованные группы далее по конвейеру
+	
+
+- `[SwitchParameter] WhatIf`
+	* Псевдонимы: wi
+
+- `[SwitchParameter] Confirm`
+	* Псевдонимы: cf
+
+- `<CommonParameters>`
+	Этот командлет поддерживает общие параметры: Verbose, Debug,
+	ErrorAction, ErrorVariable, WarningAction, WarningVariable,
+	OutBuffer и OutVariable. Для получения дополнительных сведений см. раздел
+	[about_CommonParameters][].
+
+
+##### ПРИМЕРЫ
+
+1. Переименуем группу 'test' в 'test2'.
+
+		Get-Group 'test' | Rename-Group -NewName 'test2' -Verbose;
+
+2. Переименуем группу 'test' в 'test2'.
+
+		Rename-Group -Identity (Get-Group 'test') -NewName 'test2' -WhatIf;
+
+3. Переименуем группу 'test' в 'test2'.
+
+		Rename-Group 'test' 'test2' -Verbose;
+
+##### ССЫЛКИ ПО ТЕМЕ
+
+- [Интернет версия](https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Rename-Group)
 
 #### Test-Group
 
@@ -752,6 +841,7 @@ Test-LocalGroupMember
 [New-Group]: <#new-group> "Создаёт локальную группу безопасности."
 [Remove-Group]: <#remove-group> "Удаляет локальную группу безопасности."
 [Remove-GroupMember]: <#remove-groupmember> "Удаляет учётные записи и/или группы из указанной локальной группы безопасности."
+[Rename-Group]: <#rename-group> "Переименовывает локальную группу безопасности."
 [System.Array]: <http://msdn.microsoft.com/ru-ru/library/system.array.aspx> "Array Class (System)"
 [System.Security.Principal.SecurityIdentifier]: <http://msdn.microsoft.com/ru-ru/library/system.security.principal.securityidentifier.aspx> "SecurityIdentifier Class (System.Security.Principal)"
 [System.String]: <http://msdn.microsoft.com/ru-ru/library/system.string.aspx> "String Class (System)"

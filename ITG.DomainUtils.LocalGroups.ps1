@@ -395,6 +395,105 @@ Function Remove-Group {
 
 New-Alias -Name Remove-LocalGroup -Value Remove-Group -Force;
 
+Function Rename-Group {
+<#
+.Synopsis
+	Переименовывает локальную группу безопасности. 
+.Description
+	Rename-Group переименовывает локальную группу безопасности, переданную по конвейеру.
+.Inputs
+	System.DirectoryServices.AccountManagement.GroupPrincipal
+	Группа безопасности, которую следует переименовать.
+.Link
+	https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Rename-Group
+.Example
+	Get-Group 'test' | Rename-Group -NewName 'test2' -Verbose;
+	Переименуем группу 'test' в 'test2'.
+.Example
+	Rename-Group -Identity (Get-Group 'test') -NewName 'test2' -WhatIf;
+	Переименуем группу 'test' в 'test2'.
+.Example
+	Rename-Group 'test' 'test2' -Verbose;
+	Переименуем группу 'test' в 'test2'.
+#>
+	[CmdletBinding(
+		DefaultParameterSetName = 'Identity'
+		, SupportsShouldProcess = $true
+		, ConfirmImpact = 'Low'
+		, HelpUri = 'https://github.com/IT-Service/ITG.DomainUtils.LocalGroups#Rename-Group'
+	)]
+
+	param (
+		# Идентификатор группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, Position = 1
+			, ValueFromPipelineByPropertyName = $true
+			, ParameterSetName = 'Name'
+		)]
+		[String]
+		$Name
+	,
+		# Группа безопасности к удалению
+		# Идентификатор группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, ValueFromPipeline = $true
+			, ParameterSetName = 'Identity'
+		)]
+		[System.DirectoryServices.AccountManagement.GroupPrincipal]
+		$Identity
+	,
+		# Новый идентификатор группы безопасности
+		[Parameter(
+			Mandatory = $true
+			, Position = 2
+		)]
+		[String]
+		$NewName
+	,
+		# Передавать ли переименованные группы далее по конвейеру
+		[Switch]
+		$PassThru
+	)
+
+	process {
+		try {
+			switch ( $PsCmdlet.ParameterSetName ) {
+				'Identity' {
+					$OldName = $Identity.Name;
+					$Identity.SamAccountName = $NewName;
+					$Identity.Name = $NewName;
+					if ( $PSCmdlet.ShouldProcess( "$( $OldName )" ) ) {
+						[System.DirectoryServices.DirectoryEntry] $ADSIObject = $Identity.GetUnderlyingObject();
+						$ADSIObject.Rename( $NewName );
+						$ADSIObject.CommitChanges();
+					};
+					if ( $PassThru ) { return $Identity; };
+					break;
+				}
+				'Name' {
+					Get-Group `
+						-Name $Name `
+						-Verbose:$VerbosePreference `
+					| Rename-Group `
+						-NewName $NewName `
+						-Verbose:$VerbosePreference `
+						-PassThru:$PassThru `
+					;
+					break;
+				}
+			};
+		} catch {
+			Write-Error `
+				-ErrorRecord $_ `
+			;
+		};
+	}
+}
+
+New-Alias -Name Rename-LocalGroup -Value Rename-Group -Force;
+
 Function Get-GroupMember {
 <#
 .Synopsis
